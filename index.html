@@ -403,6 +403,7 @@ const INITIAL_LOADS = [
   { id: 13, title: 'Hogg & Davis (unidad 2)', origin: 'La Grange, GA', dest: 'Craigville, IN', equip: 'Hotshot', weight: 'Confirmado', dims: 'Confirmado', client: 'Hogg & Davis', notes: '', status: 'buscando' },
   { id: 14, title: 'Athens Offset Disk Plow', origin: '1510 S Collins Frwy, Howe TX 75459', dest: '220 S Pleasant View Dr, Weslaco TX', equip: 'Step Deck / Flatbed', weight: '14,000 lbs', dims: "8'6\" W x 20' L x 10' H", client: 'Carlos de la Cruz +19566509457', notes: '⚠️ Oversize — 8.6ft de ancho, puede requerir permiso. Auction item Proxibid Lot #6169.', status: 'buscando' },
   { id: 15, title: 'John Deere 4440', origin: '6453 County Road 4400, Commerce TX 75428', dest: '220 S Pleasant View Dr, Weslaco TX', equip: 'Step Deck / Flatbed', weight: '2,000 lbs', dims: "8' W x 20' L", client: 'Carlos de la Cruz +19566509457', notes: 'Auction item — vendido $14,300. Mismo cliente que Disk Plow, mismo destino.', status: 'buscando' },
+  { id: 16, title: 'Mitsubishi SUV', origin: 'Island, KY (IAAI)', dest: 'Nashville, TN', equip: 'Car Hauler / Flatbed', weight: '~4,000 lbs', dims: 'TBD', client: 'Francisco Valdez', notes: '⚠️ Flat Tire — operable. Se recoge LUNES Jun 8.', status: 'buscando' },
 ];
 
 let finPeriod = 'week';
@@ -426,17 +427,20 @@ function loadData() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     const parsed = JSON.parse(saved);
-    loads = parsed.loads || INITIAL_LOADS;
+    loads = parsed.loads || [];
     messages = parsed.messages || [];
+    // Auto-merge: agregar cualquier load nuevo de INITIAL_LOADS que no exista
+    const existingIds = new Set(loads.map(l => l.id));
+    const newLoads = INITIAL_LOADS.filter(l => !existingIds.has(l.id));
+    if (newLoads.length > 0) { loads = [...loads, ...newLoads]; saveData(); }
   } else {
-    // Migrate from v1 — preserve status changes, add new loads
+    // Migrate from v1 if exists
     const v1 = localStorage.getItem('cbloads_dashboard_v1');
     if (v1) {
       const parsedV1 = JSON.parse(v1);
       const v1Loads = parsedV1.loads || [];
       const v1Ids = new Set(v1Loads.map(l => l.id));
-      const newLoads = INITIAL_LOADS.filter(l => !v1Ids.has(l.id));
-      loads = [...v1Loads, ...newLoads];
+      loads = [...v1Loads, ...INITIAL_LOADS.filter(l => !v1Ids.has(l.id))];
       messages = parsedV1.messages || [];
     } else {
       loads = JSON.parse(JSON.stringify(INITIAL_LOADS));
