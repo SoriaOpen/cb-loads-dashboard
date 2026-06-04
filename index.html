@@ -403,6 +403,8 @@ const INITIAL_LOADS = [
   { id: 13, miles: 652, title: 'Hogg & Davis (unidad 2)', origin: 'La Grange, GA', dest: 'Craigville, IN', equip: 'Hotshot', weight: 'Confirmado', dims: 'Confirmado', client: 'Hogg & Davis', notes: '', status: 'buscando' },
   { id: 14, miles: 583, title: 'Athens Offset Disk Plow', origin: '1510 S Collins Frwy, Howe TX 75459', dest: '220 S Pleasant View Dr, Weslaco TX', equip: 'Step Deck / Flatbed', weight: '14,000 lbs', dims: "8'6\" W x 20' L x 10' H", client: 'Carlos de la Cruz +19566509457', notes: '⚠️ Oversize — 8.6ft de ancho, puede requerir permiso. Auction item Proxibid Lot #6169.', status: 'buscando' },
   { id: 15, miles: 594, title: 'John Deere 4440', origin: '6453 County Road 4400, Commerce TX 75428', dest: '220 S Pleasant View Dr, Weslaco TX', equip: 'Step Deck / Flatbed', weight: '2,000 lbs', dims: "8' W x 20' L", client: 'Carlos de la Cruz +19566509457', notes: 'Auction item — vendido $14,300. Mismo cliente que Disk Plow, mismo destino.', status: 'buscando' },
+  { id: 17, miles: 707,  title: 'Partial Load — TBD', origin: 'Belpre, OH', dest: 'Alma Center, WI', equip: 'Hotshot / Flatbed', weight: '~800 lbs', dims: "11' L x 30\" W x 40\" H", client: 'James Giese +17158961917', notes: 'Partial load. Pendiente confirmar equipo exacto.', status: 'buscando' },
+  { id: 18, miles: 166,  title: 'Dead Backhoe — TBD', origin: 'Preston, ID', dest: 'Payson, UT', equip: 'Step Deck / Flatbed', weight: 'TBD', dims: 'TBD', client: 'Alex Chapman +18016694163', notes: '⚠️ No operable. Pendiente confirmar make/model y dimensiones.', status: 'buscando' },
   { id: 16, miles: 102, title: 'Mitsubishi SUV', origin: 'Island, KY (IAAI)', dest: 'Nashville, TN', equip: 'Car Hauler / Flatbed', weight: '~4,000 lbs', dims: 'TBD', client: 'Francisco Valdez', notes: '⚠️ Flat Tire — operable. Se recoge LUNES Jun 8.', status: 'buscando' },
 ];
 
@@ -529,6 +531,7 @@ function renderCard(l) {
         <span class="meta-tag">🚛 ${l.equip}</span>
         <span class="meta-tag">⚖️ ${l.weight}</span>
         ${l.dims && l.dims !== 'TBD' && l.dims !== 'Confirmado' ? `<span class="meta-tag">📐 ${l.dims}</span>` : ''}
+        ${l.miles ? `<span class="meta-tag" style="color:#a78bfa;border-color:#4c1d95">🛣️ ${l.miles.toLocaleString()} mi</span>` : ''}
         ${l.miles ? `<span class="meta-tag" style="color:#a78bfa;border-color:#4c1d95">🛣️ ${l.miles.toLocaleString()} mi</span>` : ''}
         ${l.client ? `<span class="meta-tag">👤 ${l.client}</span>` : ''}
         ${l.rate ? `<span class="meta-tag" style="color:#60a5fa">💰 $${parseFloat(l.rate).toLocaleString()}</span>` : ''}
