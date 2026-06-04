@@ -163,6 +163,54 @@
   .fin-empty { text-align: center; padding: 40px; color: #64748b; font-size: 13px; }
   .margin-bar-wrap { background: #0f1117; border-radius: 4px; height: 6px; width: 80px; display: inline-block; vertical-align: middle; overflow: hidden; }
   .margin-bar { height: 100%; border-radius: 4px; background: #4ade80; transition: width 0.4s; }
+
+  /* ── RESPONSIVE MÓVIL ── */
+  @media (max-width: 768px) {
+    .header { padding: 12px 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .header h1 { font-size: 18px; }
+    .header-right { width: 100%; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
+    .stat { padding: 5px 8px; }
+    .stat-num { font-size: 16px; }
+    .date-badge { font-size: 11px; padding: 4px 10px; align-self: flex-end; }
+
+    .tabs { padding: 10px 8px 0; gap: 2px; overflow-x: auto; flex-wrap: nowrap; }
+    .tab { padding: 8px 12px; font-size: 12px; white-space: nowrap; }
+
+    .main { padding: 12px 12px; }
+    .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    .card-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .card-actions { width: 100%; display: flex; gap: 6px; }
+    .btn-sm { flex: 1; text-align: center; padding: 7px 6px; font-size: 12px; }
+    .status-select { width: 100%; }
+
+    .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .btn-add { width: 100%; justify-content: center; }
+
+    .filter-bar { gap: 6px; }
+    .filter-btn { padding: 5px 10px; font-size: 11px; }
+
+    .fin-summary { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .fin-card-value { font-size: 20px; }
+    .fin-table-header { display: none; }
+    .fin-row { grid-template-columns: 1fr 1fr; gap: 4px 12px; padding: 10px 12px; }
+    .fin-row span { font-size: 12px; }
+    .fin-row .load-name { grid-column: 1/-1; font-size: 13px; margin-bottom: 4px; }
+
+    .modal { padding: 20px 16px; width: 95vw; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+
+    .msg-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .msg-footer { flex-direction: column; }
+    .btn-approve, .btn-skip, .btn-dismiss { width: 100%; text-align: center; padding: 10px; }
+  }
+
+  @media (max-width: 400px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .fin-summary { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
