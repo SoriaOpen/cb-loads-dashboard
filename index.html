@@ -385,7 +385,7 @@
 
 <script>
 // ─── DATA ───────────────────────────────────────────────
-const STORAGE_KEY = 'cbloads_dashboard_v1';
+const STORAGE_KEY = 'cbloads_dashboard_v2';
 
 const INITIAL_LOADS = [
   { id: 1, title: 'Trinity Eagle Bridge Belt Trailer', origin: 'Nashua, IA 50658', dest: 'Niota, TN 37826', equip: 'Power Only (semi)', weight: '~34,000 lbs', dims: "53' L x 8'6\" W x 13'6\" H", client: '+14234625278 (Dylan)', notes: 'Trailer con banda transportadora. Power only — tiene sus propias ruedas. Confirmar quinta rueda estándar.', status: 'buscando' },
@@ -401,6 +401,8 @@ const INITIAL_LOADS = [
   { id: 11, title: 'Trackmobile TM4140 (Railcar Mover)', origin: 'Verona, KY', dest: 'Craigville, IN', equip: 'RGN / Heavy Step Deck', weight: '30,000–35,000 lbs', dims: "22' x 8'6\" x 9'6\"", client: 'Pendiente', notes: '⚠️ Heavy Haul. Puede requerir permisos si ancho >8\'6". Verificar si rueda o necesita winch.', status: 'buscando' },
   { id: 12, title: 'Hogg & Davis (unidad 1)', origin: 'Craigville, IN', dest: 'Somonauk, IL 60552', equip: 'Hotshot', weight: 'Confirmado', dims: 'Confirmado', client: 'Hogg & Davis', notes: '', status: 'buscando' },
   { id: 13, title: 'Hogg & Davis (unidad 2)', origin: 'La Grange, GA', dest: 'Craigville, IN', equip: 'Hotshot', weight: 'Confirmado', dims: 'Confirmado', client: 'Hogg & Davis', notes: '', status: 'buscando' },
+  { id: 14, title: 'Athens Offset Disk Plow', origin: '1510 S Collins Frwy, Howe TX 75459', dest: '220 S Pleasant View Dr, Weslaco TX', equip: 'Step Deck / Flatbed', weight: '14,000 lbs', dims: "8'6\" W x 20' L x 10' H", client: 'Carlos de la Cruz +19566509457', notes: '⚠️ Oversize — 8.6ft de ancho, puede requerir permiso. Auction item Proxibid Lot #6169.', status: 'buscando' },
+  { id: 15, title: 'John Deere 4440', origin: '6453 County Road 4400, Commerce TX 75428', dest: '220 S Pleasant View Dr, Weslaco TX', equip: 'Step Deck / Flatbed', weight: '2,000 lbs', dims: "8' W x 20' L", client: 'Carlos de la Cruz +19566509457', notes: 'Auction item — vendido $14,300. Mismo cliente que Disk Plow, mismo destino.', status: 'buscando' },
 ];
 
 let finPeriod = 'week';
@@ -427,8 +429,19 @@ function loadData() {
     loads = parsed.loads || INITIAL_LOADS;
     messages = parsed.messages || [];
   } else {
-    loads = JSON.parse(JSON.stringify(INITIAL_LOADS));
-    messages = [];
+    // Migrate from v1 — preserve status changes, add new loads
+    const v1 = localStorage.getItem('cbloads_dashboard_v1');
+    if (v1) {
+      const parsedV1 = JSON.parse(v1);
+      const v1Loads = parsedV1.loads || [];
+      const v1Ids = new Set(v1Loads.map(l => l.id));
+      const newLoads = INITIAL_LOADS.filter(l => !v1Ids.has(l.id));
+      loads = [...v1Loads, ...newLoads];
+      messages = parsedV1.messages || [];
+    } else {
+      loads = JSON.parse(JSON.stringify(INITIAL_LOADS));
+      messages = [];
+    }
     saveData();
   }
 }
