@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CB Loads — Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #1a1f2e, #252d3d); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+  .header h1 span { color: #4f8ef7; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .date-badge { font-size: 13px; color: #94a3b8; background: #1e2535; padding: 6px 14px; border-radius: 20px; border: 1px solid #2d3748; }
+  .stats-bar { display: flex; gap: 12px; }
+  .stat { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 6px 16px; text-align: center; }
+  .stat-num { font-size: 18px; font-weight: 700; color: #4f8ef7; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; padding: 16px 32px 0; background: #0f1117; border-bottom: 1px solid #1e2535; }
+  .tab { padding: 10px 22px; border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 600; cursor: pointer; color: #64748b; border: 1px solid transparent; border-bottom: none; transition: all 0.2s; }
+  .tab:hover { color: #94a3b8; background: #1a1f2e; }
+  .tab.active { background: #1a1f2e; color: #fff; border-color: #2d3748; }
+  .tab .badge { display: inline-block; background: #ef4444; color: #fff; font-size: 10px; border-radius: 10px; padding: 1px 6px; margin-left: 6px; }
+
+  /* MAIN CONTENT */
+  .main { padding: 24px 32px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS GRID */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+
+  /* LOAD CARD */
+  .load-card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+  .load-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .card-num { font-size: 11px; color: #4f8ef7; font-weight: 700; background: #1e3a5f; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .card-title { font-size: 14px; font-weight: 700; color: #f1f5f9; flex: 1; line-height: 1.3; }
+  .card-body { padding: 0 16px 14px; }
+  .route { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; }
+  .route-from, .route-to { color: #94a3b8; flex: 1; }
+  .route-arrow { color: #4f8ef7; font-size: 16px; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .meta-tag { font-size: 11px; background: #252d3d; color: #94a3b8; padding: 3px 8px; border-radius: 6px; border: 1px solid #2d3748; }
+  .meta-tag.warn { background: #2d1f00; color: #f59e0b; border-color: #78350f; }
+  .card-notes { font-size: 11px; color: #64748b; line-height: 1.5; margin-bottom: 12px; padding: 8px; background: #0f1117; border-radius: 6px; border-left: 3px solid #2d3748; }
+  .card-footer { padding: 10px 16px; background: #141820; border-top: 1px solid #1e2535; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+  /* STATUS SELECT */
+  .status-select { padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; outline: none; transition: all 0.2s; }
+  .status-buscando { background: #1e3a5f; color: #60a5fa; }
+  .status-trabajando { background: #1e2d1e; color: #4ade80; }
+  .status-chofer { background: #2d1f5e; color: #a78bfa; }
+  .status-transito { background: #1e2d2d; color: #22d3ee; }
+  .status-entregado { background: #1a2e1a; color: #86efac; }
+  .status-cancelado { background: #2d1a1a; color: #f87171; }
+
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-buscando { background: #60a5fa; }
+  .dot-trabajando { background: #4ade80; }
+  .dot-chofer { background: #a78bfa; }
+  .dot-transito { background: #22d3ee; }
+  .dot-entregado { background: #86efac; }
+  .dot-cancelado { background: #f87171; }
+
+  .card-actions { display: flex; gap: 6px; }
+  .btn-sm { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-edit { background: #252d3d; color: #94a3b8; }
+  .btn-edit:hover { background: #2d3748; color: #e2e8f0; }
+  .btn-del { background: #2d1a1a; color: #f87171; }
+  .btn-del:hover { background: #3d1f1f; }
+
+  /* MESSAGES SECTION */
+  .msg-card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .msg-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e2535; }
+  .msg-from { font-size: 14px; font-weight: 700; color: #f1f5f9; }
+  .msg-time { font-size: 11px; color: #64748b; }
+  .msg-priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+  .priority-hot { background: #2d1500; color: #f97316; border: 1px solid #7c2d12; }
+  .priority-normal { background: #1a2535; color: #60a5fa; border: 1px solid #1e3a5f; }
+  .priority-stop { background: #2d1a1a; color: #f87171; border: 1px solid #7f1d1d; }
+  .msg-body { padding: 12px 16px; }
+  .msg-context { font-size: 11px; color: #64748b; background: #0f1117; padding: 8px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #2d3748; }
+  .msg-context strong { color: #4f8ef7; }
+  .msg-inbound { font-size: 13px; color: #e2e8f0; background: #252d3d; padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #4f8ef7; }
+  .msg-reply-label { font-size: 11px; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .msg-reply-text { width: 100%; background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; color: #e2e8f0; font-size: 13px; padding: 10px; resize: vertical; min-height: 80px; font-family: inherit; }
+  .msg-reply-text:focus { outline: none; border-color: #4f8ef7; }
+  .msg-footer { padding: 10px 16px; background: #141820; border-top: 1px solid #1e2535; display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-approve { background: #166534; color: #4ade80; border: none; padding: 7px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-approve:hover { background: #15803d; }
+  .btn-skip { background: #252d3d; color: #64748b; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .btn-skip:hover { background: #2d3748; color: #94a3b8; }
+  .btn-dismiss { background: #2d1a1a; color: #f87171; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+  /* ADD LOAD */
+  .btn-add { background: #1e3a5f; color: #60a5fa; border: 1px solid #2d5282; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  .btn-add:hover { background: #2d5282; color: #93c5fd; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-size: 16px; font-weight: 700; color: #f1f5f9; }
+  .section-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 16px; padding: 28px; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { font-size: 18px; font-weight: 700; color: #f1f5f9; margin-bottom: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1/-1; }
+  .form-group label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .form-group input, .form-group select, .form-group textarea { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; color: #e2e8f0; font-size: 13px; padding: 9px 12px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #4f8ef7; }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  .btn-cancel { background: #252d3d; color: #94a3b8; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-save { background: #1e3a5f; color: #60a5fa; border: 1px solid #2d5282; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-save:hover { background: #2d5282; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 60px 20px; color: #64748b; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state p { font-size: 14px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #166534; color: #4ade80; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* FILTER BAR */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #2d3748; background: #1a1f2e; color: #64748b; transition: all 0.2s; }
+  .filter-btn.active, .filter-btn:hover { background: #1e3a5f; color: #60a5fa; border-color: #2d5282; }
+
+  /* FINANCE */
+  .fin-period-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .fin-tab { padding: 7px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #2d3748; background: #1a1f2e; color: #64748b; transition: all 0.2s; }
+  .fin-tab.active { background: #1e3a5f; color: #60a5fa; border-color: #2d5282; }
+  .fin-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .fin-card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; padding: 18px 20px; }
+  .fin-card-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .fin-card-value { font-size: 26px; font-weight: 700; }
+  .fin-card-value.green { color: #4ade80; }
+  .fin-card-value.blue { color: #60a5fa; }
+  .fin-card-value.red { color: #f87171; }
+  .fin-card-value.yellow { color: #fbbf24; }
+  .fin-card-sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .fin-table { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; overflow: hidden; }
+  .fin-table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; gap: 0; padding: 10px 16px; background: #141820; border-bottom: 1px solid #2d3748; }
+  .fin-table-header span { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .fin-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; gap: 0; padding: 11px 16px; border-bottom: 1px solid #1e2535; align-items: center; transition: background 0.15s; }
+  .fin-row:hover { background: #1e2535; }
+  .fin-row:last-child { border-bottom: none; }
+  .fin-row span { font-size: 13px; color: #94a3b8; }
+  .fin-row .load-name { color: #f1f5f9; font-weight: 600; font-size: 13px; }
+  .fin-row .profit-pos { color: #4ade80; font-weight: 700; }
+  .fin-row .profit-neg { color: #f87171; font-weight: 700; }
+  .fin-row .profit-zero { color: #64748b; }
+  .fin-period-title { font-size: 14px; font-weight: 700; color: #94a3b8; margin-bottom: 12px; }
+  .fin-empty { text-align: center; padding: 40px; color: #64748b; font-size: 13px; }
+  .margin-bar-wrap { background: #0f1117; border-radius: 4px; height: 6px; width: 80px; display: inline-block; vertical-align: middle; overflow: hidden; }
+  .margin-bar { height: 100%; border-radius: 4px; background: #4ade80; transition: width 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CB <span>Loads</span> Dashboard</h1>
+  <div class="header-right">
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-num" id="stat-active">0</div><div class="stat-label">Activas</div></div>
+      <div class="stat"><div class="stat-num" id="stat-transit">0</div><div class="stat-label">En Tránsito</div></div>
+      <div class="stat"><div class="stat-num" id="stat-done">0</div><div class="stat-label">Entregadas</div></div>
+      <div class="stat"><div class="stat-num" id="stat-msgs">0</div><div class="stat-label">Mensajes</div></div>
+      <div class="stat"><div class="stat-num" id="stat-profit" style="color:#4ade80">$0</div><div class="stat-label">Profit Total</div></div>
+    </div>
+    <div class="date-badge" id="current-date"></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('loads')">📦 Cargas Activas</div>
+  <div class="tab" onclick="showTab('messages')" id="tab-messages">💬 Mensajes Pendientes <span class="badge" id="msg-badge" style="display:none">0</span></div>
+  <div class="tab" onclick="showTab('finance')">💰 Finanzas</div>
+</div>
+
+<div class="main">
+
+  <!-- CARGAS -->
+  <div class="section active" id="section-loads">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Cargas Activas</div>
+        <div class="section-sub">Actualiza el estado de cada carga con el menú desplegable</div>
+      </div>
+      <button class="btn-add" onclick="openModal()">+ Agregar Carga</button>
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" onclick="filterLoads('all', this)">Todas</button>
+      <button class="filter-btn" onclick="filterLoads('buscando', this)">🔍 Buscando Driver</button>
+      <button class="filter-btn" onclick="filterLoads('trabajando', this)">⚙️ Trabajando</button>
+      <button class="filter-btn" onclick="filterLoads('chofer', this)">✅ Chofer Confirmado</button>
+      <button class="filter-btn" onclick="filterLoads('transito', this)">🚛 En Tránsito</button>
+      <button class="filter-btn" onclick="filterLoads('entregado', this)">📬 Entregadas</button>
+    </div>
+    <div class="cards-grid" id="loads-grid"></div>
+  </div>
+
+  <!-- FINANZAS -->
+  <div class="section" id="section-finance">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Finanzas</div>
+        <div class="section-sub">Profit por carga — resumen semanal y mensual</div>
+      </div>
+    </div>
+    <div class="fin-period-tabs">
+      <button class="fin-tab active" onclick="setFinPeriod('week', this)">Esta Semana</button>
+      <button class="fin-tab" onclick="setFinPeriod('month', this)">Este Mes</button>
+      <button class="fin-tab" onclick="setFinPeriod('all', this)">Todo</button>
+    </div>
+    <div class="fin-summary">
+      <div class="fin-card"><div class="fin-card-label">💰 Ingresos</div><div class="fin-card-value blue" id="fin-revenue">$0</div><div class="fin-card-sub" id="fin-revenue-sub">lo que cobras</div></div>
+      <div class="fin-card"><div class="fin-card-label">🚛 Costo Carrier</div><div class="fin-card-value red" id="fin-cost">$0</div><div class="fin-card-sub" id="fin-cost-sub">lo que pagas</div></div>
+      <div class="fin-card"><div class="fin-card-label">📈 Profit Neto</div><div class="fin-card-value green" id="fin-profit">$0</div><div class="fin-card-sub" id="fin-profit-sub">ingresos − costos</div></div>
+      <div class="fin-card"><div class="fin-card-label">📊 Margen</div><div class="fin-card-value yellow" id="fin-margin">0%</div><div class="fin-card-sub" id="fin-loads-count">0 cargas con datos</div></div>
+    </div>
+    <div class="fin-period-title" id="fin-period-title">Detalle — Esta Semana</div>
+    <div class="fin-table">
+      <div class="fin-table-header">
+        <span>Carga</span><span>Estado</span><span>Fecha</span><span>Cobrado</span><span>Pagado</span><span>Profit</span>
+      </div>
+      <div id="fin-rows"><div class="fin-empty">Agrega tarifas a las cargas para ver el resumen aquí.</div></div>
+    </div>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="section" id="section-messages">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Mensajes Pendientes</div>
+        <div class="section-sub">Revisa, edita y aprueba cada respuesta antes de enviar</div>
+      </div>
+    </div>
+    <div id="messages-list">
+      <div class="empty-state"><div class="icon">📭</div><p>No hay mensajes pendientes por ahora.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL AGREGAR/EDITAR -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h2 id="modal-title">Agregar Carga</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Unidad / Carga</label>
+        <input type="text" id="f-title" placeholder="ej. 1955 Plymouth">
+      </div>
+      <div class="form-group">
+        <label>Estado</label>
+        <select id="f-status">
+          <option value="buscando">🔍 Buscando Driver</option>
+          <option value="trabajando">⚙️ Trabajando</option>
+          <option value="chofer">✅ Chofer Confirmado</option>
+          <option value="transito">🚛 En Tránsito</option>
+          <option value="entregado">📬 Entregado</option>
+          <option value="cancelado">❌ Cancelado</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Origen</label>
+        <input type="text" id="f-origin" placeholder="Ciudad, Estado ZIP">
+      </div>
+      <div class="form-group">
+        <label>Destino</label>
+        <input type="text" id="f-dest" placeholder="Ciudad, Estado ZIP">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Equipo Requerido</label>
+        <input type="text" id="f-equip" placeholder="ej. Power Only, Flatbed, RGN">
+      </div>
+      <div class="form-group">
+        <label>Peso</label>
+        <input type="text" id="f-weight" placeholder="ej. 34,000 lbs">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Dimensiones</label>
+        <input type="text" id="f-dims" placeholder="ej. 53' L x 8'6&quot; W x 13'6&quot; H">
+      </div>
+      <div class="form-group">
+        <label>Cliente / Contacto</label>
+        <input type="text" id="f-client" placeholder="Nombre o número">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>💰 Rate (lo que cobras) $</label>
+        <input type="number" id="f-rate" placeholder="ej. 1500" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>🚛 Carrier Fee (lo que pagas) $</label>
+        <input type="number" id="f-carrier" placeholder="ej. 1200" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>📅 Fecha entrega</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="form-group"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label>Notas</label>
+        <textarea id="f-notes" placeholder="Instrucciones especiales, alertas, etc."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveLoad()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────
+const STORAGE_KEY = 'cbloads_dashboard_v1';
+
+const INITIAL_LOADS = [
+  { id: 1, title: 'Trinity Eagle Bridge Belt Trailer', origin: 'Nashua, IA 50658', dest: 'Niota, TN 37826', equip: 'Power Only (semi)', weight: '~34,000 lbs', dims: "53' L x 8'6\" W x 13'6\" H", client: '+14234625278 (Dylan)', notes: 'Trailer con banda transportadora. Power only — tiene sus propias ruedas. Confirmar quinta rueda estándar.', status: 'buscando' },
+  { id: 2, title: 'Vehículos — Full Trailer', origin: 'Columbia, MO', dest: 'Lucerne, MO', equip: 'Open Flatbed', weight: 'TBD', dims: 'TBD (depende de unidades)', client: '+16602920427 (Alex)', notes: 'Loading docks en ambos extremos. Pendiente confirmar cantidad y tipo de vehículos.', status: 'buscando' },
+  { id: 3, title: 'Motocicleta', origin: 'Conway, MI', dest: 'Cincinnati, OH', equip: 'Enclosed / Sprinter Van', weight: '~450 lbs', dims: "~7' L x 3' W x 4'6\" H", client: '+15135152457', notes: 'Confirmar marca/modelo para specs exactas.', status: 'buscando' },
+  { id: 4, title: 'Camper (Fifth Wheel)', origin: 'Thomson, GA 30824', dest: 'Pineville, LA', equip: 'Flatbed (fifth wheel hitch)', weight: '~12,000 lbs', dims: "~40' L x 8'6\" W x 13' H", client: '+14042859683 (Brad Wiley nephew)', notes: 'Confirmar año/modelo del camper para specs exactas.', status: 'buscando' },
+  { id: 5, title: '2002 Subaru WRX', origin: 'East Tennessee (confirmar ciudad)', dest: 'Ennis, TX', equip: 'Hotshot / Enclosed Trailer', weight: '2,954 lbs', dims: "14'7\" x 5'7\" x 4'8\"", client: '+19726936407 (Nicholas)', notes: 'Timeframe: principios de julio. Confirmar pickup address en TN.', status: 'buscando' },
+  { id: 6, title: '1949 Ford 8N Tractor (parts machine)', origin: 'Pendiente (auction)', dest: 'Glasgow, KY 42141', equip: 'Hotshot / Flatbed', weight: '2,410 lbs', dims: "9'7\" x 5'4\" x 5'6\"", client: 'Harvey Gillispie +12704041144', notes: 'Cliente aún licitando en auction. Quote necesaria antes de confirmar pickup. Puede no arrancar.', status: 'buscando' },
+  { id: 7, title: '1955 Plymouth', origin: 'Ripon, CA 95366', dest: 'Carol Stream, IL 60188', equip: 'Car Hauler / Enclosed / Flatbed', weight: '~3,150 lbs', dims: "17' x 6'2\" x 5'1\"", client: 'Pendiente', notes: '⚠️ MANUAL SHIFT — informar al driver. Vehículo clásico, manejo cuidadoso.', status: 'buscando' },
+  { id: 8, title: '2016 Toyota Tacoma 4x4', origin: 'Thonotosassa, FL', dest: 'Craigville, IN', equip: 'Car Hauler / Flatbed', weight: '4,480 lbs', dims: "17'8\" x 6'2\" x 5'10\"", client: 'Pendiente', notes: 'Verificar altura si va en car hauler de 2 niveles.', status: 'buscando' },
+  { id: 9, title: '2021 Ford F550 Bucket Truck (Altec AT40G)', origin: 'China Grove, NC', dest: 'Craigville, IN', equip: 'Step Deck / Lowboy', weight: '13,600 lbs (GVWR)', dims: "25' x 8' x 9'6\"", client: 'Pendiente', notes: "⚠️ Altura de viaje 9'6\" — verificar clearances en ruta.", status: 'buscando' },
+  { id: 10, title: '2 Pallets LTL — Auto Parts + PTOs', origin: 'Verona, KY', dest: 'Craigville, IN', equip: 'LTL Estándar', weight: '1,500 lbs total', dims: '36x36x36" + 29x37x36"', client: 'Pendiente', notes: 'Confirmar si necesita lift gate.', status: 'buscando' },
+  { id: 11, title: 'Trackmobile TM4140 (Railcar Mover)', origin: 'Verona, KY', dest: 'Craigville, IN', equip: 'RGN / Heavy Step Deck', weight: '30,000–35,000 lbs', dims: "22' x 8'6\" x 9'6\"", client: 'Pendiente', notes: '⚠️ Heavy Haul. Puede requerir permisos si ancho >8\'6". Verificar si rueda o necesita winch.', status: 'buscando' },
+  { id: 12, title: 'Hogg & Davis (unidad 1)', origin: 'Craigville, IN', dest: 'Somonauk, IL 60552', equip: 'Hotshot', weight: 'Confirmado', dims: 'Confirmado', client: 'Hogg & Davis', notes: '', status: 'buscando' },
+  { id: 13, title: 'Hogg & Davis (unidad 2)', origin: 'La Grange, GA', dest: 'Craigville, IN', equip: 'Hotshot', weight: 'Confirmado', dims: 'Confirmado', client: 'Hogg & Davis', notes: '', status: 'buscando' },
+];
+
+let finPeriod = 'week';
+
+const STATUS_CONFIG = {
+  buscando:  { label: '🔍 Buscando Driver',    cls: 'status-buscando',  dot: 'dot-buscando' },
+  trabajando:{ label: '⚙️ Trabajando',          cls: 'status-trabajando', dot: 'dot-trabajando' },
+  chofer:    { label: '✅ Chofer Confirmado',   cls: 'status-chofer',    dot: 'dot-chofer' },
+  transito:  { label: '🚛 En Tránsito',         cls: 'status-transito',  dot: 'dot-transito' },
+  entregado: { label: '📬 Entregado',           cls: 'status-entregado', dot: 'dot-entregado' },
+  cancelado: { label: '❌ Cancelado',           cls: 'status-cancelado', dot: 'dot-cancelado' },
+};
+
+// ─── STATE ───────────────────────────────────────────────
+let loads = [];
+let messages = [];
+let editingId = null;
+let currentFilter = 'all';
+
+function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    loads = parsed.loads || INITIAL_LOADS;
+    messages = parsed.messages || [];
+  } else {
+    loads = JSON.parse(JSON.stringify(INITIAL_LOADS));
+    messages = [];
+    saveData();
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ loads, messages }));
+}
+
+// ─── TABS ─────────────────────────────────────────────────
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('section-' + tab).classList.add('active');
+}
+
+// ─── STATS ────────────────────────────────────────────────
+function updateStats() {
+  const active = loads.filter(l => !['entregado','cancelado'].includes(l.status)).length;
+  const transit = loads.filter(l => l.status === 'transito').length;
+  const done = loads.filter(l => l.status === 'entregado').length;
+  const msgs = messages.filter(m => !m.dismissed).length;
+  // profit stat from all loads with data
+  const totalProfit = loads.filter(l => l.rate && l.carrier).reduce((s,l) => s + (parseFloat(l.rate)||0) - (parseFloat(l.carrier)||0), 0);
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-transit').textContent = transit;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-msgs').textContent = msgs;
+  // update profit stat in header
+  const profitEl = document.getElementById('stat-profit');
+  if (profitEl) { profitEl.textContent = '$' + totalProfit.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0}); profitEl.style.color = totalProfit >= 0 ? '#4ade80' : '#f87171'; }
+  const badge = document.getElementById('msg-badge');
+  if (msgs > 0) { badge.textContent = msgs; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
+}
+
+// ─── LOADS ────────────────────────────────────────────────
+function filterLoads(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLoads();
+}
+
+function renderLoads() {
+  const grid = document.getElementById('loads-grid');
+  const filtered = currentFilter === 'all' ? loads : loads.filter(l => l.status === currentFilter);
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📦</div><p>No hay cargas en este estado.</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(l => renderCard(l)).join('');
+}
+
+function renderCard(l) {
+  const sc = STATUS_CONFIG[l.status] || STATUS_CONFIG.buscando;
+  const hasWarn = l.notes && l.notes.includes('⚠️');
+  const options = Object.entries(STATUS_CONFIG).map(([k,v]) =>
+    `<option value="${k}" ${l.status===k?'selected':''}>${v.label}</option>`
+  ).join('');
+  return `
+  <div class="load-card" id="card-${l.id}">
+    <div class="card-header">
+      <span class="card-num">#${l.id}</span>
+      <span class="card-title">${l.title}</span>
+    </div>
+    <div class="card-body">
+      <div class="route">
+        <span class="route-from">📍 ${l.origin}</span>
+        <span class="route-arrow">→</span>
+        <span class="route-to">🏁 ${l.dest}</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-tag">🚛 ${l.equip}</span>
+        <span class="meta-tag">⚖️ ${l.weight}</span>
+        ${l.dims && l.dims !== 'TBD' && l.dims !== 'Confirmado' ? `<span class="meta-tag">📐 ${l.dims}</span>` : ''}
+        ${l.client ? `<span class="meta-tag">👤 ${l.client}</span>` : ''}
+        ${l.rate ? `<span class="meta-tag" style="color:#60a5fa">💰 $${parseFloat(l.rate).toLocaleString()}</span>` : ''}
+        ${l.carrier ? `<span class="meta-tag" style="color:#f87171">🚛 $${parseFloat(l.carrier).toLocaleString()}</span>` : ''}
+        ${(l.rate && l.carrier) ? `<span class="meta-tag" style="color:${(parseFloat(l.rate)-parseFloat(l.carrier))>=0?'#4ade80':'#f87171'};font-weight:700">P: $${(parseFloat(l.rate)-parseFloat(l.carrier)).toLocaleString()}</span>` : ''}
+      </div>
+      ${l.notes ? `<div class="card-notes ${hasWarn?'warn':''}">${l.notes}</div>` : ''}
+    </div>
+    <div class="card-footer">
+      <select class="status-select ${sc.cls}" onchange="changeStatus(${l.id}, this.value)">
+        ${options}
+      </select>
+      <div class="card-actions">
+        <button class="btn-sm btn-edit" onclick="openModal(${l.id})">✏️ Editar</button>
+        <button class="btn-sm" style="background:#1a2d1a;color:#4ade80" onclick="sendToHeidy(${l.id})">📋 Heidy</button>
+        <button class="btn-sm btn-del" onclick="deleteLoad(${l.id})">🗑️</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function changeStatus(id, newStatus) {
+  const load = loads.find(l => l.id === id);
+  if (load) { load.status = newStatus; saveData(); updateStats(); renderLoads(); showToast(`Estado actualizado: ${STATUS_CONFIG[newStatus].label}`); }
+}
+
+function deleteLoad(id) {
+  if (!confirm('¿Eliminar esta carga?')) return;
+  loads = loads.filter(l => l.id !== id);
+  saveData(); renderLoads(); updateStats();
+}
+
+// ─── MODAL ────────────────────────────────────────────────
+function openModal(id = null) {
+  editingId = id;
+  document.getElementById('modal-title').textContent = id ? 'Editar Carga' : 'Agregar Carga';
+  if (id) {
+    const l = loads.find(x => x.id === id);
+    document.getElementById('f-title').value = l.title;
+    document.getElementById('f-status').value = l.status;
+    document.getElementById('f-origin').value = l.origin;
+    document.getElementById('f-dest').value = l.dest;
+    document.getElementById('f-equip').value = l.equip;
+    document.getElementById('f-weight').value = l.weight;
+    document.getElementById('f-dims').value = l.dims;
+    document.getElementById('f-client').value = l.client || '';
+    document.getElementById('f-rate').value = l.rate || '';
+    document.getElementById('f-carrier').value = l.carrier || '';
+    document.getElementById('f-date').value = l.deliveryDate || '';
+    document.getElementById('f-notes').value = l.notes || '';
+  } else {
+    ['f-title','f-origin','f-dest','f-equip','f-weight','f-dims','f-client','f-rate','f-carrier','f-notes'].forEach(f => document.getElementById(f).value = '');
+    document.getElementById('f-status').value = 'buscando';
+    document.getElementById('f-date').value = '';
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+function saveLoad() {
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { alert('La carga necesita un nombre.'); return; }
+  const data = {
+    title, status: document.getElementById('f-status').value,
+    origin: document.getElementById('f-origin').value.trim(),
+    dest: document.getElementById('f-dest').value.trim(),
+    equip: document.getElementById('f-equip').value.trim(),
+    weight: document.getElementById('f-weight').value.trim(),
+    dims: document.getElementById('f-dims').value.trim(),
+    client: document.getElementById('f-client').value.trim(),
+    rate: document.getElementById('f-rate').value,
+    carrier: document.getElementById('f-carrier').value,
+    deliveryDate: document.getElementById('f-date').value,
+    notes: document.getElementById('f-notes').value.trim(),
+  };
+  if (editingId) {
+    const idx = loads.findIndex(l => l.id === editingId);
+    loads[idx] = { ...loads[idx], ...data };
+  } else {
+    const maxId = loads.length ? Math.max(...loads.map(l => l.id)) : 0;
+    loads.push({ id: maxId + 1, ...data });
+  }
+  saveData(); renderLoads(); updateStats(); renderFinance(); closeModal();
+  showToast(editingId ? 'Carga actualizada ✓' : 'Carga agregada ✓');
+}
+
+// ─── SEND TO HEIDY ───────────────────────────────────────
+function sendToHeidy(id) {
+  const l = loads.find(x => x.id === id);
+  if (!l) return;
+  const msg = [
+    `#${l.id} — ${l.title}`,
+    `Pickup: ${l.origin}`,
+    `Delivery: ${l.dest}`,
+    `Equipment: ${l.equip}`,
+    l.weight && l.weight !== 'TBD' ? `Weight: ${l.weight}` : '',
+    l.dims && l.dims !== 'TBD' && l.dims !== 'Confirmado' ? `Dims: ${l.dims}` : '',
+    l.client ? `Client: ${l.client}` : '',
+    l.notes ? `Notes: ${l.notes}` : '',
+    l.rate ? `Rate: $${parseFloat(l.rate).toLocaleString()}` : '',
+    l.carrier ? `Carrier Fee: $${parseFloat(l.carrier).toLocaleString()}` : '',
+  ].filter(Boolean).join('\n');
+
+  // Copy to clipboard as fallback
+  navigator.clipboard.writeText(msg).catch(()=>{});
+
+  // Show confirm with message preview
+  const preview = `Send to Heidy (+19097577729):\n\n${msg}`;
+  if (confirm(preview + '\n\n¿Confirmar envío?')) {
+    // Call local node script via fetch (requires local server) or show instructions
+    fetch('http://localhost:7729/send-heidy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    }).then(r => r.json()).then(d => {
+      if (d.ok) showToast('✅ Mensaje enviado a Heidy');
+      else showToast('❌ Error: ' + (d.error || 'desconocido'));
+    }).catch(() => {
+      showToast('⚠️ Copiado al portapapeles — envía manualmente');
+    });
+  }
+}
+
+// ─── FINANCE ──────────────────────────────────────────────
+function setFinPeriod(period, btn) {
+  finPeriod = period;
+  document.querySelectorAll('.fin-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFinance();
+}
+
+function getWeekRange() {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Mon
+  const mon = new Date(now.setDate(diff));
+  mon.setHours(0,0,0,0);
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
+  return { start: mon, end: sun };
+}
+
+function getMonthRange() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+  return { start, end };
+}
+
+function renderFinance() {
+  const titles = { week: 'Esta Semana', month: 'Este Mes', all: 'Todas las Cargas' };
+  document.getElementById('fin-period-title').textContent = 'Detalle — ' + titles[finPeriod];
+
+  // Filter loads with financial data
+  let filtered = loads.filter(l => l.rate || l.carrier);
+
+  if (finPeriod === 'week') {
+    const { start, end } = getWeekRange();
+    filtered = filtered.filter(l => {
+      if (!l.deliveryDate) return true; // include if no date set
+      const d = new Date(l.deliveryDate);
+      return d >= start && d <= end;
+    });
+  } else if (finPeriod === 'month') {
+    const { start, end } = getMonthRange();
+    filtered = filtered.filter(l => {
+      if (!l.deliveryDate) return true;
+      const d = new Date(l.deliveryDate);
+      return d >= start && d <= end;
+    });
+  }
+
+  const revenue = filtered.reduce((s,l) => s + (parseFloat(l.rate)||0), 0);
+  const cost = filtered.reduce((s,l) => s + (parseFloat(l.carrier)||0), 0);
+  const profit = revenue - cost;
+  const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
+  const withBoth = filtered.filter(l => l.rate && l.carrier).length;
+
+  const fmt = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+  document.getElementById('fin-revenue').textContent = fmt(revenue);
+  document.getElementById('fin-cost').textContent = fmt(cost);
+  document.getElementById('fin-profit').textContent = fmt(profit);
+  document.getElementById('fin-profit').style.color = profit >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('fin-margin').textContent = margin + '%';
+  document.getElementById('fin-loads-count').textContent = withBoth + ' cargas con datos completos';
+
+  const rows = document.getElementById('fin-rows');
+  if (filtered.length === 0) {
+    rows.innerHTML = '<div class="fin-empty">No hay cargas con datos financieros en este período.<br>Edita una carga y agrega el Rate y Carrier Fee.</div>';
+    return;
+  }
+
+  const sc = STATUS_CONFIG;
+  rows.innerHTML = filtered.map(l => {
+    const rate = parseFloat(l.rate) || 0;
+    const carrier = parseFloat(l.carrier) || 0;
+    const p = rate - carrier;
+    const pClass = p > 0 ? 'profit-pos' : p < 0 ? 'profit-neg' : 'profit-zero';
+    const mPct = rate > 0 ? Math.round((p/rate)*100) : 0;
+    const statusLabel = sc[l.status]?.label || l.status;
+    const dateStr = l.deliveryDate ? new Date(l.deliveryDate + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—';
+    return `<div class="fin-row">
+      <span class="load-name">${l.title}</span>
+      <span style="font-size:11px">${statusLabel}</span>
+      <span>${dateStr}</span>
+      <span style="color:#60a5fa">${rate ? '$'+rate.toLocaleString() : '—'}</span>
+      <span style="color:#f87171">${carrier ? '$'+carrier.toLocaleString() : '—'}</span>
+      <span class="${pClass}">${(rate||carrier) ? '$'+p.toLocaleString() : '—'}${rate&&carrier ? ` <span style="font-size:10px;opacity:0.6">(${mPct}%)</span>` : ''}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── MESSAGES ─────────────────────────────────────────────
+function renderMessages() {
+  const list = document.getElementById('messages-list');
+  const active = messages.filter(m => !m.dismissed);
+  if (active.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No hay mensajes pendientes por ahora.</p></div>';
+    return;
+  }
+  list.innerHTML = active.map(m => renderMsgCard(m)).join('');
+}
+
+function renderMsgCard(m) {
+  const priorityClass = m.priority === 'hot' ? 'priority-hot' : m.priority === 'stop' ? 'priority-stop' : 'priority-normal';
+  const priorityLabel = m.priority === 'hot' ? '🔥 Oportunidad' : m.priority === 'stop' ? '🚫 STOP' : '💬 Normal';
+  return `
+  <div class="msg-card" id="msg-${m.id}">
+    <div class="msg-header">
+      <div>
+        <div class="msg-from">${m.from} <span style="color:#64748b;font-size:12px;font-weight:400">${m.phone}</span></div>
+        <div class="msg-time">${m.time}</div>
+      </div>
+      <span class="msg-priority ${priorityClass}">${priorityLabel}</span>
+    </div>
+    <div class="msg-body">
+      ${m.context ? `<div class="msg-context"><strong>Contexto:</strong> ${m.context}</div>` : ''}
+      <div class="msg-inbound">"${m.inbound}"</div>
+      <div class="msg-reply-label">Respuesta sugerida:</div>
+      <textarea class="msg-reply-text" id="reply-${m.id}">${m.reply}</textarea>
+    </div>
+    <div class="msg-footer">
+      <button class="btn-skip" onclick="dismissMsg(${m.id})">Ignorar</button>
+      <button class="btn-approve" onclick="approveMsg(${m.id})">✅ Aprobar y Enviar</button>
+    </div>
+  </div>`;
+}
+
+function approveMsg(id) {
+  const msg = messages.find(m => m.id === id);
+  if (!msg) return;
+  const reply = document.getElementById('reply-' + id).value;
+  msg.approved = true; msg.dismissed = true; msg.finalReply = reply;
+  saveData(); renderMessages(); updateStats();
+  showToast('Aprobado — listo para enviar via RingCentral ✓');
+}
+
+function dismissMsg(id) {
+  const msg = messages.find(m => m.id === id);
+  if (msg) { msg.dismissed = true; saveData(); renderMessages(); updateStats(); }
+}
+
+// ─── UTILS ────────────────────────────────────────────────
+function showToast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function setDate() {
+  const now = new Date();
+  document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Guatemala' });
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+loadData();
+setDate();
+renderLoads();
+renderMessages();
+renderFinance();
+updateStats();
+</script>
+</body>
+</html>
