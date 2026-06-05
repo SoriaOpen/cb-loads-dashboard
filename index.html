@@ -853,14 +853,14 @@ const INITIAL_TODOS = [
   { col: 'calls', text: 'Llamar Peter Kraner — Massey Ferguson', sub: '+1 (519) 823-6666 — molesto por Gabriel Andrade, requiere tacto', tag: 'hot', id: 't2' },
   { col: 'calls', text: 'Janet Wood — JD 650 J Dozer', sub: '+1 (540) 578-5616 — dijo que llamaba hoy', tag: 'pending', id: 't3' },
   { col: 'calls', text: 'Abner Cotzajay — Lathe', sub: '+1 (281) 570-7785 — esperando devuelve llamada', tag: 'pending', id: 't4' },
+  { col: 'calls', text: 'Llamar Alec Cooley en la mañana', sub: '+1 (217) 314-0403 — tiene carga Houston TX → Clinton IL, pidió callback', tag: 'hot', id: 't10' },
   { col: 'quotes', text: 'James Giese — dar rate Partial Belpre OH → Alma Center WI', sub: '+1 (715) 896-1917 — ~800 lbs, 707 mi — está esperando número', tag: 'hot', id: 't5' },
-  { col: 'quotes', text: 'Alex Chapman — confirmar make/model backhoe', sub: '+1 (801) 669-4163 — mandó fotos, confirmar specs', tag: 'hot', id: 't6' },
+  { col: 'quotes', text: 'Alex Chapman — dar quote Case 750 H-6 dead backhoe', sub: '+1 (801) 669-4163 — Preston ID → Payson UT, 166 mi. Cliente carga y descarga.', tag: 'hot', id: 't6' },
+  { col: 'quotes', text: 'Juan Hernandez — mandar quote trencher (bajo $975)', sub: '+1 (832) 605-2290 — 2,000 lbs, 42"W x 9\'L, sin trailer. NY→Houston 1,496 mi.', tag: 'hot', id: 't9' },
   { col: 'quotes', text: 'Marc Thomas — confirmar pickup/delivery excavator 15-20t', sub: '+1 (415) 279-1407 — pendiente dirección origen y destino', tag: 'pending', id: 't7' },
-  { col: 'quotes', text: 'Jon Knecht — confirmar specs Case 580SN + cotizar', sub: '+1 (260) 224-0337 — Falcon CO → Fort Wayne IN, semana 6 jul', tag: 'pending', id: 't8' },
-  { col: 'quotes', text: 'Juan Hernandez — mandar quote trencher (bajo $975)', sub: '+1 (832) 605-2290 — 2,000 lbs, 42"W x 9\'L, sin trailer. Lou ya confirmó specs por tel.', tag: 'hot', id: 't9' },
-  { col: 'calls', text: 'Llamar Alec Cooley en la mañana — inquirí sobre carga Houston → Clinton IL', sub: '+1 (217) 314-0403 — ya llamó, pidió callback mañana', tag: 'hot', id: 't10' },
-  { col: 'leads', text: 'Josh Dotseth — \u00bfmueves carros? (Mahindra 5570)', sub: '+1 (952) 465-1424 — responder sí y pedir detalles', tag: 'pending', id: 't11' },
-  { col: 'leads', text: 'Allen Miller — CAT 375 Excavator (auction rbauction.com)', sub: '+1 (480) 392-3667 — Heavy haul ~100k lbs. Pendiente pickup/delivery y si ya compró.', tag: 'hot', id: 't12' },
+  { col: 'quotes', text: 'Jon Knecht — esperar confirmación specs Case 580SN', sub: '+1 (260) 224-0337 — Falcon CO → Fort Wayne IN, semana 6 jul. Mensaje enviado.', tag: 'pending', id: 't8' },
+  { col: 'leads', text: 'Allen Miller — CAT 375 Excavator — esperar respuesta', sub: '+1 (480) 392-3667 — Heavy haul ~100k lbs. Le pedimos pickup/delivery. Mensaje enviado.', tag: 'hot', id: 't12' },
+  { col: 'leads', text: 'Josh Dotseth — esperar respuesta sobre qué quiere mover', sub: '+1 (952) 465-1424 — preguntó si movemos carros. Mensaje enviado.', tag: 'pending', id: 't11' },
   { col: 'leads', text: 'Detra Pate — Fifth Wheel Camper Thomson GA → Pineville LA', sub: 'Pendiente pickup/delivery exacto', tag: 'pending', id: 't13' },
   { col: 'systems', text: 'Outlook/Azure — completar consentimiento admin con Ivan', sub: 'Acceso a email automatizado pendiente', tag: 'info', id: 't14' },
   { col: 'systems', text: 'Heidy server — configurar auto-start Windows', sub: 'Railway deploy botón pendiente', tag: 'info', id: 't15' },
@@ -876,7 +876,7 @@ const TODO_COLS = [
 let todos = [];
 
 function loadTodos() {
-  const saved = localStorage.getItem('cbloads_todos_v1');
+  const saved = localStorage.getItem('cbloads_todos_v2');
   if (saved) {
     todos = JSON.parse(saved);
     // Add any new initial todos not yet in saved
@@ -889,7 +889,7 @@ function loadTodos() {
 }
 
 function saveTodos() {
-  localStorage.setItem('cbloads_todos_v1', JSON.stringify(todos));
+  localStorage.setItem('cbloads_todos_v2', JSON.stringify(todos));
 }
 
 function renderTodo() {
