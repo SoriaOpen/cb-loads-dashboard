@@ -212,6 +212,18 @@
     .fin-summary { grid-template-columns: 1fr; }
   }
 
+  /* ── POSTINGS ── */
+  .postings-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .posting-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+  .posting-badge.dat { background: #1a2d1a; color: #4ade80; border: 1px solid #166534; }
+  .posting-badge.truckstop { background: #1e2d3d; color: #60a5fa; border: 1px solid #1d4ed8; }
+  .posting-badge.cd { background: #2d1f3d; color: #c084fc; border: 1px solid #7e22ce; }
+  .posting-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid #2d3748; }
+  .posting-section-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .posting-check-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .posting-check-row label { font-size: 13px; color: #94a3b8; min-width: 110px; }
+  .posting-price-input { background: #0f1117; border: 1px solid #2d3748; border-radius: 6px; padding: 4px 8px; color: #e2e8f0; font-size: 12px; width: 90px; }
+
   /* ── TODO ── */
   .todo-columns { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .todo-col { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; padding: 16px; }
@@ -402,7 +414,22 @@
     <div class="form-row">
       <div class="form-group full">
         <label>Notas</label>
-        <textarea id="f-notes" placeholder="Instrucciones especiales, alertas, etc."></textarea>
+      <textarea id="f-notes" placeholder="Instrucciones especiales, alertas, etc."></textarea>
+      </div>
+      <div class="posting-section">
+        <div class="posting-section-title">📋 Posteada en plataformas</div>
+        <div class="posting-check-row">
+          <input type="checkbox" id="f-postDAT"> <label for="f-postDAT">✅ DAT</label>
+          <input class="posting-price-input" id="f-postDATprice" placeholder="$ rate posteado">
+        </div>
+        <div class="posting-check-row">
+          <input type="checkbox" id="f-postTS"> <label for="f-postTS">✅ Truckstop</label>
+          <input class="posting-price-input" id="f-postTSprice" placeholder="$ rate posteado">
+        </div>
+        <div class="posting-check-row">
+          <input type="checkbox" id="f-postCD"> <label for="f-postCD">✅ Central Dispatch</label>
+          <input class="posting-price-input" id="f-postCDprice" placeholder="$ rate posteado">
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -572,13 +599,17 @@ function renderCard(l) {
         <span class="meta-tag">⚖️ ${l.weight}</span>
         ${l.dims && l.dims !== 'TBD' && l.dims !== 'Confirmado' ? `<span class="meta-tag">📐 ${l.dims}</span>` : ''}
         ${l.miles ? `<span class="meta-tag" style="color:#a78bfa;border-color:#4c1d95">🛣️ ${l.miles.toLocaleString()} mi</span>` : ''}
-        ${l.miles ? `<span class="meta-tag" style="color:#a78bfa;border-color:#4c1d95">🛣️ ${l.miles.toLocaleString()} mi</span>` : ''}
         ${l.client ? `<span class="meta-tag">👤 ${l.client}</span>` : ''}
         ${l.rate ? `<span class="meta-tag" style="color:#60a5fa">💰 $${parseFloat(l.rate).toLocaleString()}</span>` : ''}
         ${l.carrier ? `<span class="meta-tag" style="color:#f87171">🚛 $${parseFloat(l.carrier).toLocaleString()}</span>` : ''}
         ${(l.rate && l.carrier) ? `<span class="meta-tag" style="color:${(parseFloat(l.rate)-parseFloat(l.carrier))>=0?'#4ade80':'#f87171'};font-weight:700">P: $${(parseFloat(l.rate)-parseFloat(l.carrier)).toLocaleString()}</span>` : ''}
       </div>
       ${l.notes ? `<div class="card-notes ${hasWarn?'warn':''}">${l.notes}</div>` : ''}
+      ${(l.postDAT || l.postTS || l.postCD) ? `<div class="postings-row">
+        ${l.postDAT ? `<span class="posting-badge dat">✅ DAT${l.postDATprice ? ' $'+l.postDATprice : ''}</span>` : ''}
+        ${l.postTS ? `<span class="posting-badge truckstop">✅ Truckstop${l.postTSprice ? ' $'+l.postTSprice : ''}</span>` : ''}
+        ${l.postCD ? `<span class="posting-badge cd">✅ Central Dispatch${l.postCDprice ? ' $'+l.postCDprice : ''}</span>` : ''}
+      </div>` : ''}
     </div>
     <div class="card-footer">
       <select class="status-select ${sc.cls}" onchange="changeStatus(${l.id}, this.value)">
@@ -622,10 +653,19 @@ function openModal(id = null) {
     document.getElementById('f-carrier').value = l.carrier || '';
     document.getElementById('f-date').value = l.deliveryDate || '';
     document.getElementById('f-notes').value = l.notes || '';
+    document.getElementById('f-postDAT').checked = !!l.postDAT;
+    document.getElementById('f-postDATprice').value = l.postDATprice || '';
+    document.getElementById('f-postTS').checked = !!l.postTS;
+    document.getElementById('f-postTSprice').value = l.postTSprice || '';
+    document.getElementById('f-postCD').checked = !!l.postCD;
+    document.getElementById('f-postCDprice').value = l.postCDprice || '';
   } else {
-    ['f-title','f-origin','f-dest','f-equip','f-weight','f-dims','f-client','f-rate','f-carrier','f-notes'].forEach(f => document.getElementById(f).value = '');
+    ['f-title','f-origin','f-dest','f-equip','f-weight','f-dims','f-client','f-rate','f-carrier','f-notes','f-postDATprice','f-postTSprice','f-postCDprice'].forEach(f => document.getElementById(f).value = '');
     document.getElementById('f-status').value = 'buscando';
     document.getElementById('f-date').value = '';
+    document.getElementById('f-postDAT').checked = false;
+    document.getElementById('f-postTS').checked = false;
+    document.getElementById('f-postCD').checked = false;
   }
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -648,6 +688,12 @@ function saveLoad() {
     carrier: document.getElementById('f-carrier').value,
     deliveryDate: document.getElementById('f-date').value,
     notes: document.getElementById('f-notes').value.trim(),
+    postDAT: document.getElementById('f-postDAT').checked,
+    postDATprice: document.getElementById('f-postDATprice').value.trim(),
+    postTS: document.getElementById('f-postTS').checked,
+    postTSprice: document.getElementById('f-postTSprice').value.trim(),
+    postCD: document.getElementById('f-postCD').checked,
+    postCDprice: document.getElementById('f-postCDprice').value.trim(),
   };
   if (editingId) {
     const idx = loads.findIndex(l => l.id === editingId);
