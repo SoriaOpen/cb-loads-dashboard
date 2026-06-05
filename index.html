@@ -465,10 +465,15 @@ function loadData() {
     const parsed = JSON.parse(saved);
     loads = parsed.loads || [];
     messages = parsed.messages || [];
-    // Auto-merge: patch miles en existentes + agregar loads nuevos
+    // Auto-merge: patch datos desde INITIAL_LOADS + agregar loads nuevos
     const initialMap = {};
     INITIAL_LOADS.forEach(l => initialMap[l.id] = l);
-    loads = loads.map(l => ({ ...l, miles: (l.miles != null ? l.miles : (initialMap[l.id] ? initialMap[l.id].miles : null)) }));
+    loads = loads.map(l => {
+      const base = initialMap[l.id];
+      if (!base) return l;
+      // Preserve user data: status, rate, carrier, deliveryDate
+      return { ...base, status: l.status, rate: l.rate, carrier: l.carrier, deliveryDate: l.deliveryDate };
+    });
     const existingIds = new Set(loads.map(l => l.id));
     const newLoads = INITIAL_LOADS.filter(l => !existingIds.has(l.id));
     if (newLoads.length > 0) { loads = [...loads, ...newLoads]; }
