@@ -485,6 +485,7 @@ const STATUS_CONFIG = {
 // ─── STATE ───────────────────────────────────────────────
 let loads = [];
 let messages = [];
+let deletedIds = [];
 let editingId = null;
 let currentFilter = 'all';
 
@@ -494,6 +495,7 @@ function loadData() {
     const parsed = JSON.parse(saved);
     loads = parsed.loads || [];
     messages = parsed.messages || [];
+    deletedIds = parsed.deletedIds || [];
     // Auto-merge: patch datos desde INITIAL_LOADS + agregar loads nuevos
     const initialMap = {};
     INITIAL_LOADS.forEach(l => initialMap[l.id] = l);
@@ -504,8 +506,10 @@ function loadData() {
       return { ...base, status: l.status, rate: l.rate, carrier: l.carrier, deliveryDate: l.deliveryDate };
     });
     const existingIds = new Set(loads.map(l => l.id));
-    const newLoads = INITIAL_LOADS.filter(l => !existingIds.has(l.id));
+    const newLoads = INITIAL_LOADS.filter(l => !existingIds.has(l.id) && !deletedIds.includes(l.id));
     if (newLoads.length > 0) { loads = [...loads, ...newLoads]; }
+    // Filter out any deleted loads that slipped through
+    loads = loads.filter(l => !deletedIds.includes(l.id));
     saveData();
   } else {
     // Migrate from v2 o v1 — preservar status/rates, agregar miles
@@ -528,7 +532,7 @@ function loadData() {
 }
 
 function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ loads, messages }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ loads, messages, deletedIds }));
 }
 
 // ─── TABS ─────────────────────────────────────────────────
@@ -575,10 +579,10 @@ function renderLoads() {
     grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📦</div><p>No hay cargas en este estado.</p></div>';
     return;
   }
-  grid.innerHTML = filtered.map(l => renderCard(l)).join('');
+  grid.innerHTML = filtered.map((l, idx) => renderCard(l, idx + 1)).join('');
 }
 
-function renderCard(l) {
+function renderCard(l, displayNum) {
   const sc = STATUS_CONFIG[l.status] || STATUS_CONFIG.buscando;
   const hasWarn = l.notes && l.notes.includes('⚠️');
   const options = Object.entries(STATUS_CONFIG).map(([k,v]) =>
@@ -587,7 +591,7 @@ function renderCard(l) {
   return `
   <div class="load-card" id="card-${l.id}">
     <div class="card-header">
-      <span class="card-num">#${l.id}</span>
+      <span class="card-num">#${displayNum !== undefined ? displayNum : l.id}</span>
       <span class="card-title">${l.title}</span>
     </div>
     <div class="card-body">
@@ -633,6 +637,7 @@ function changeStatus(id, newStatus) {
 
 function deleteLoad(id) {
   if (!confirm('¿Eliminar esta carga?')) return;
+  if (!deletedIds.includes(id)) deletedIds.push(id);
   loads = loads.filter(l => l.id !== id);
   saveData(); renderLoads(); updateStats();
 }
