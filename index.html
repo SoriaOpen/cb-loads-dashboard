@@ -439,7 +439,7 @@ const INITIAL_LOADS = [
   { id: 16, miles: 102, title: 'Mitsubishi SUV', origin: 'Island, KY (IAAI)', dest: 'Nashville, TN', equip: 'Car Hauler / Flatbed', weight: '~4,000 lbs', dims: 'TBD', client: 'Francisco Valdez', notes: '⚠️ Flat Tire — operable. Se recoge LUNES Jun 8.', status: 'buscando' },
   { id: 19, miles: 1176, title: 'Case 580SN Backhoe', origin: 'Falcon, CO', dest: 'Fort Wayne, IN', equip: 'Flatbed / Step Deck', weight: 'TBD', dims: 'TBD', client: 'Jon Knecht +12602240337', notes: 'Semana del 6 jul. Pendiente confirmar specs y precio.', status: 'buscando' },
   { id: 20, miles: 1496, title: 'Trencher (No Trailer)', origin: 'North Tonawanda, NY', dest: 'Houston, TX', equip: 'Flatbed / Step Deck', weight: '~2,000 lbs', dims: "42\" W x 9' L", client: 'Juan Hernandez +18326052290', notes: 'Cliente pide $975 — revisar vs. tarifa real. Sin remolque.', status: 'buscando' },
-  { id: 21, miles: 826, title: '2005 Freightliner M2 112', origin: 'Houston, TX', dest: 'Clinton, IL', equip: 'Drive-Away / RGN', weight: 'TBD', dims: 'TBD', client: 'Alec Cooley +12173140403', notes: 'Pendiente confirmar dirección pickup/delivery y specs.', status: 'buscando' },
+  { id: 21, miles: null, title: 'Caterpillar 375 Excavator', origin: 'TBD (auction rbauction.com)', dest: 'TBD', equip: 'Lowboy / RGN (Heavy Haul)', weight: '~100,000 lbs', dims: 'TBD', client: 'Allen Miller +14803923667', notes: '⚠️ Heavy haul — requiere permisos oversize. Pendiente confirmar pickup/delivery y si ya compró en auction.', status: 'buscando' },
 ];
 
 let finPeriod = 'week';
@@ -852,10 +852,10 @@ const INITIAL_TODOS = [
   { col: 'quotes', text: 'Alex Chapman — confirmar make/model backhoe', sub: '+1 (801) 669-4163 — mandó fotos, confirmar specs', tag: 'hot', id: 't6' },
   { col: 'quotes', text: 'Marc Thomas — confirmar pickup/delivery excavator 15-20t', sub: '+1 (415) 279-1407 — pendiente dirección origen y destino', tag: 'pending', id: 't7' },
   { col: 'quotes', text: 'Jon Knecht — confirmar specs Case 580SN + cotizar', sub: '+1 (260) 224-0337 — Falcon CO → Fort Wayne IN, semana 6 jul', tag: 'pending', id: 't8' },
-  { col: 'quotes', text: 'Juan Hernandez — revisar tarifa vs $975 trencher NY→Houston', sub: '+1 (832) 605-2290 — 1,496 mi, cliente ya esperando', tag: 'hot', id: 't9' },
-  { col: 'leads', text: 'Alec Cooley — Freightliner M2 Houston TX → Clinton IL', sub: '+1 (217) 314-0403 — confirmar dirección y specs', tag: 'pending', id: 't10' },
+  { col: 'quotes', text: 'Juan Hernandez — mandar quote trencher (bajo $975)', sub: '+1 (832) 605-2290 — 2,000 lbs, 42"W x 9\'L, sin trailer. Lou ya confirmó specs por tel.', tag: 'hot', id: 't9' },
+  { col: 'calls', text: 'Llamar Alec Cooley en la mañana — inquirí sobre carga Houston → Clinton IL', sub: '+1 (217) 314-0403 — ya llamó, pidió callback mañana', tag: 'hot', id: 't10' },
   { col: 'leads', text: 'Josh Dotseth — \u00bfmueves carros? (Mahindra 5570)', sub: '+1 (952) 465-1424 — responder sí y pedir detalles', tag: 'pending', id: 't11' },
-  { col: 'leads', text: '+1 (480) 392-3667 — mandó imagen \u00bf\u00cfa qué se refiere?', sub: '23:30 — \"What about something like this?\" — no está en ninguna lista', tag: 'info', id: 't12' },
+  { col: 'leads', text: 'Allen Miller — CAT 375 Excavator (auction rbauction.com)', sub: '+1 (480) 392-3667 — Heavy haul ~100k lbs. Pendiente pickup/delivery y si ya compró.', tag: 'hot', id: 't12' },
   { col: 'leads', text: 'Detra Pate — Fifth Wheel Camper Thomson GA → Pineville LA', sub: 'Pendiente pickup/delivery exacto', tag: 'pending', id: 't13' },
   { col: 'systems', text: 'Outlook/Azure — completar consentimiento admin con Ivan', sub: 'Acceso a email automatizado pendiente', tag: 'info', id: 't14' },
   { col: 'systems', text: 'Heidy server — configurar auto-start Windows', sub: 'Railway deploy botón pendiente', tag: 'info', id: 't15' },
