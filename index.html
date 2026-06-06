@@ -104,6 +104,20 @@
   .section-title { font-size: 16px; font-weight: 700; color: #f1f5f9; }
   .section-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
 
+  /* RATES POPUP */
+  .rates-fab { position: fixed; bottom: 28px; right: 28px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; border-radius: 50px; padding: 14px 22px; font-size: 14px; font-weight: 700; cursor: pointer; z-index: 90; box-shadow: 0 4px 20px rgba(37,99,235,0.5); display: flex; align-items: center; gap: 8px; transition: transform 0.2s; }
+  .rates-fab:hover { transform: translateY(-2px); }
+  .rates-modal { max-width: 680px; width: 95vw; max-height: 80vh; overflow-y: auto; }
+  .rates-modal h2 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .rates-section { margin-bottom: 20px; }
+  .rates-section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #4f8ef7; margin-bottom: 10px; font-weight: 700; }
+  .rates-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rates-table th { background: #252d3d; color: #94a3b8; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  .rates-table td { padding: 8px 12px; border-bottom: 1px solid #1e2535; color: #e2e8f0; }
+  .rates-table tr:last-child td { border-bottom: none; }
+  .rates-table .good { color: #22c55e; font-weight: 700; }
+  .rates-table .warn { color: #f59e0b; font-weight: 700; }
+  .rates-note { font-size: 11px; color: #64748b; margin-top: 8px; font-style: italic; }
   /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
@@ -473,7 +487,7 @@ const INITIAL_LOADS = [
         { id: 25, miles: null, title: "40' Gooseneck Trailer", origin: 'Upland, IN', dest: 'TBD (múltiples destinos)', equip: 'Gooseneck / Lowboy', weight: 'TBD', dims: "40' L", client: 'Trav Behr +17656679480', notes: 'Work trailer, múltiples destinos. Manda fotos próximamente. Le movimos Scissor Lift JLG 1930ES antes. Respondió a SMS segunda base.', status: 'buscando' },
         { id: 26, miles: 210, title: "Prefab Building 50'x100'", origin: 'Mount Pleasant, UT', dest: 'Beryl, UT', equip: 'Flatbed / Oversized (múltiples cargas)', weight: 'TBD', dims: "50' W x 100' L (en secciones TBD)", client: 'Kaleb M Reynolds +14357046100', notes: 'Edificio prefabricado 50x100. Pedimos fotos, dimensiones y peso por sección. Le movimos Kenworth T600 + W900 antes. Respondió a SMS segunda base.', status: 'buscando' },
         { id: 27, miles: 540, title: 'Chrysler 300', origin: 'Moultrie, GA', dest: 'Lake Village, AR', equip: 'Car Hauler / Open Carrier', weight: '~3,600 lbs', dims: "16' L x 6' W x 4.5' H", client: 'Mark Breedlove +14048238199', notes: 'Respondió a SMS segunda base. Esperando confirmación si el carro corre y confirmación de direcciones. Le movimos 2007 Nissan Titan antes.', status: 'buscando' },
-        { id: 29, miles: null, title: '2015 Ford F-250 Crew Cab (Inoperable)', origin: 'Moss Point, MS (IAA Gulf Coast)', dest: 'TBD', equip: 'Flatbed con Winch', weight: '~7,000 lbs', dims: "22' L x 8' W x 6.5' H", client: 'Peter Cao +14093000579 petercao@email.com', notes: '⚠️ INOPERABLE — perdieron llave, requiere winch. IAA no tiene loading dock ni ramps — driver trae todo. Llamar 24hrs antes: Amanda Otto 228-474-5559. VIN: 1FT7W2AT3FEB39164. Quote antes del lunes. DESTINO PENDIENTE.', status: 'buscando' },
+        { id: 29, miles: 346, title: '2015 Ford F-250 Crew Cab (Inoperable)', origin: 'Moss Point, MS (IAA Gulf Coast)', dest: 'Port Arthur, TX 77642', equip: 'Flatbed con Winch', weight: '~7,000 lbs', dims: "22' L x 8' W x 6.5' H", client: 'Peter Cao +14093000579 petercao@email.com', notes: '⚠️ INOPERABLE — perdieron llave, requiere winch. IAA no tiene loading dock ni ramps — driver trae todo. Llamar 24hrs antes: Amanda Otto 228-474-5559. VIN: 1FT7W2AT3FEB39164. Quote antes del lunes. 💰 Driver pay est: $1,000–$1,100 (SC $2.56/mi + winch $125). Cliente: $1,350–$1,500.', status: 'buscando' },
         { id: 28, miles: null, title: 'Lumber & Pallets (Pendiente)', origin: 'TBD', dest: 'TBD', equip: 'Flatbed', weight: 'TBD', dims: 'TBD', client: 'Aaron Garber +13304733530', notes: '⏸️ TO-DO: Contactar para saber volumen y lanes. Preguntó si Lou es freight broker para lumber & pallets cross-state. Le movimos Ford Ranchero. NO responder aún — decisión pendiente del jefe. // TO-DO: (970) 379-7808 llamará la próxima semana — pendiente de identificar cliente.', status: 'buscando' },
 ];
 
@@ -1001,5 +1015,66 @@ renderFinance();
 renderTodo();
 updateStats();
 </script>
+<!-- RATES FAB -->
+<button class="rates-fab" onclick="document.getElementById('ratesModal').classList.add('open')">💰 Market Rates</button>
+
+<!-- RATES MODAL -->
+<div class="modal-overlay" id="ratesModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal rates-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2>💰 Driver Market Rates — Jun 2026</h2>
+      <button onclick="document.getElementById('ratesModal').classList.remove('open')" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer">✕</button>
+    </div>
+
+    <div class="rates-section">
+      <h3>📍 DAT Spot Rates por Región (Flatbed)</h3>
+      <table class="rates-table">
+        <tr><th>Región</th><th>$/mi driver</th><th>Estados clave</th></tr>
+        <tr><td>Midwest (MW)</td><td class="good">$2.77</td><td>IL, IN, OH, MI, WI, MN</td></tr>
+        <tr><td>Southeast (SE)</td><td class="good">$2.73</td><td>FL, GA, AL, TN, SC, NC</td></tr>
+        <tr><td>South Central (SC)</td><td class="warn">$2.56</td><td>TX, LA, MS, AR, OK</td></tr>
+        <tr><td>Northeast (NE)</td><td class="warn">$2.47</td><td>NY, PA, NJ, CT, MA</td></tr>
+        <tr><td>West (W)</td><td>$2.29</td><td>CA, OR, WA, NV, AZ</td></tr>
+      </table>
+      <p class="rates-note">* Step deck: +$0.23/mi sobre flatbed. RGN/Lowboy: +$0.40–0.60/mi.</p>
+    </div>
+
+    <div class="rates-section">
+      <h3>📏 Ajuste por Distancia (sobre tasa base)</h3>
+      <table class="rates-table">
+        <tr><th>Distancia</th><th>Ajuste</th><th>Ejemplo SC</th></tr>
+        <tr><td>Corta (&lt;200 mi)</td><td class="warn">+22–25%</td><td>~$3.10–3.20/mi</td></tr>
+        <tr><td>Media (200–500 mi)</td><td class="warn">+12–18%</td><td>~$2.85–3.00/mi</td></tr>
+        <tr><td>Media-larga (500–700 mi)</td><td>+7–8%</td><td>~$2.75/mi</td></tr>
+        <tr><td>Larga (&gt;700 mi)</td><td class="good">Base</td><td>~$2.56/mi</td></tr>
+      </table>
+    </div>
+
+    <div class="rates-section">
+      <h3>⚙️ Extras Comunes</h3>
+      <table class="rates-table">
+        <tr><th>Servicio</th><th>Costo aprox.</th></tr>
+        <tr><td>Winch (inoperable)</td><td>+$100–150</td></tr>
+        <tr><td>Oversize permit (por estado)</td><td>$50–150/estado</td></tr>
+        <tr><td>Escort/pilot car</td><td>$2.50–4.00/mi</td></tr>
+        <tr><td>Tarp fee (flatbed)</td><td>+$50–100</td></tr>
+        <tr><td>Fuel surcharge recargo</td><td>+$0.10–0.20/mi</td></tr>
+      </table>
+    </div>
+
+    <div class="rates-section">
+      <h3>💡 Markup Lou → Cliente</h3>
+      <table class="rates-table">
+        <tr><th>Haul type</th><th>Markup típico</th><th>Nota</th></tr>
+        <tr><td>Equipo estándar</td><td class="good">20–30%</td><td>Sobre lo que paga el driver</td></tr>
+        <tr><td>Heavy haul / RGN</td><td class="good">15–25%</td><td>Margen menor, monto mayor</td></tr>
+        <tr><td>Auto transport</td><td class="warn">10–15%</td><td>Mercado más competido</td></tr>
+        <tr><td>Partial / LTL</td><td class="good">25–35%</td><td>Más flexibilidad</td></tr>
+      </table>
+      <p class="rates-note">Siempre proteger la billetera del cliente — negociar con el driver hasta el límite razonable antes de cerrar.</p>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
