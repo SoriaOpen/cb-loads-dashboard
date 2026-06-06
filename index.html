@@ -35,6 +35,14 @@
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
 
   /* LOAD CARD */
+  
+  /* CARD STATES */
+  .load-card.card-incomplete { border-color: #d97706; box-shadow: 0 0 0 1px #d97706; }
+  .load-card.card-incomplete .card-header { border-bottom: 2px solid #d97706; }
+  .load-card.card-future { border-color: #6366f1; box-shadow: 0 0 0 1px #6366f1; }
+  .load-card.card-future .card-header { border-bottom: 2px solid #6366f1; }
+  .card-badge-incomplete { display:inline-block; font-size:10px; font-weight:700; background:#78350f; color:#fbbf24; padding:2px 8px; border-radius:4px; margin-left:6px; vertical-align:middle; }
+  .card-badge-future { display:inline-block; font-size:10px; font-weight:700; background:#1e1b4b; color:#a5b4fc; padding:2px 8px; border-radius:4px; margin-left:6px; vertical-align:middle; }
   .load-card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
   .load-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
   .card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
@@ -500,6 +508,7 @@ const STATUS_CONFIG = {
   transito:  { label: '🚛 En Tránsito',         cls: 'status-transito',  dot: 'dot-transito' },
   entregado: { label: '📬 Entregado',           cls: 'status-entregado', dot: 'dot-entregado' },
   cancelado: { label: '❌ Cancelado',           cls: 'status-cancelado', dot: 'dot-cancelado' },
+  futuro:    { label: '📅 A Futuro',             cls: 'status-buscando',  dot: 'dot-buscando' },
 };
 
 // ─── STATE ───────────────────────────────────────────────
@@ -609,10 +618,22 @@ function renderCard(l, displayNum) {
     `<option value="${k}" ${l.status===k?'selected':''}>${v.label}</option>`
   ).join('');
   return `
-  <div class="load-card" id="card-${l.id}">
+  ${(()=>{
+    const isFuture = l.status === 'futuro' || /mid.?july|next week|couple weeks|july|agosto|future|upcoming|semana que viene/i.test(l.notes||'');
+    const isIncomplete = (l.dest||'').includes('TBD') || (l.origin||'').includes('TBD') || l.weight === 'TBD' || (!l.miles && l.dest !== 'TBD' && !(l.dest||'').includes('múltiples'));
+    const extraClass = isFuture ? ' card-future' : isIncomplete ? ' card-incomplete' : '';
+    const badge = isFuture ? '<span class="card-badge-future">📅 FUTURO</span>' : isIncomplete ? '<span class="card-badge-incomplete">⚠️ INFO INCOMPLETA</span>' : '';
+    return `<div class="load-card${extraClass}" id="card-${l.id}" data-future="${isFuture}" data-incomplete="${isIncomplete}">`;
+  })()}
     <div class="card-header">
       <span class="card-num">#${displayNum !== undefined ? displayNum : l.id}</span>
-      <span class="card-title">${l.title}</span>
+      <span class="card-title">${l.title}${(()=>{
+      const isFuture = l.status === 'futuro' || /mid.?july|next week|couple weeks|july|agosto|future|upcoming|semana que viene/i.test(l.notes||'');
+      const isIncomplete = (l.dest||'').includes('TBD') || (l.origin||'').includes('TBD') || l.weight === 'TBD' || (!l.miles && l.dest !== 'TBD' && !(l.dest||'').includes('múltiples'));
+      if(isFuture) return '<span class="card-badge-future">📅 FUTURO</span>';
+      if(isIncomplete) return '<span class="card-badge-incomplete">⚠️ INFO</span>';
+      return '';
+    })()}</span>
     </div>
     <div class="card-body">
       <div class="route">
