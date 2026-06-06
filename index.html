@@ -1049,51 +1049,98 @@ updateStats();
     </div>
 
     <div class="rates-section">
-      <h3>📍 DAT Spot Rates por Región (Flatbed)</h3>
+      <h3>🚛 Flatbed — Open (48'/53')</h3>
       <table class="rates-table">
-        <tr><th>Región</th><th>$/mi driver</th><th>Estados clave</th></tr>
-        <tr><td>Midwest (MW)</td><td class="good">$2.77</td><td>IL, IN, OH, MI, WI, MN</td></tr>
-        <tr><td>Southeast (SE)</td><td class="good">$2.73</td><td>FL, GA, AL, TN, SC, NC</td></tr>
-        <tr><td>South Central (SC)</td><td class="warn">$2.56</td><td>TX, LA, MS, AR, OK</td></tr>
-        <tr><td>Northeast (NE)</td><td class="warn">$2.47</td><td>NY, PA, NJ, CT, MA</td></tr>
-        <tr><td>West (W)</td><td>$2.29</td><td>CA, OR, WA, NV, AZ</td></tr>
-      </table>
-      <p class="rates-note">* Step deck: +$0.23/mi sobre flatbed. RGN/Lowboy: +$0.40–0.60/mi.</p>
-    </div>
-
-    <div class="rates-section">
-      <h3>📏 Ajuste por Distancia (sobre tasa base)</h3>
-      <table class="rates-table">
-        <tr><th>Distancia</th><th>Ajuste</th><th>Ejemplo SC</th></tr>
-        <tr><td>Corta (&lt;200 mi)</td><td class="warn">+22–25%</td><td>~$3.10–3.20/mi</td></tr>
-        <tr><td>Media (200–500 mi)</td><td class="warn">+12–18%</td><td>~$2.85–3.00/mi</td></tr>
-        <tr><td>Media-larga (500–700 mi)</td><td>+7–8%</td><td>~$2.75/mi</td></tr>
-        <tr><td>Larga (&gt;700 mi)</td><td class="good">Base</td><td>~$2.56/mi</td></tr>
+        <tr><th>Región</th><th>&lt;200mi</th><th>200–500mi</th><th>500–700mi</th><th>&gt;700mi</th></tr>
+        <tr><td>Midwest</td><td class="warn">$3.40–3.50</td><td class="warn">$3.10–3.30</td><td class="good">$2.95–3.05</td><td class="good">$2.77</td></tr>
+        <tr><td>Southeast</td><td class="warn">$3.35–3.45</td><td class="warn">$3.05–3.25</td><td class="good">$2.90–3.00</td><td class="good">$2.73</td></tr>
+        <tr><td>South Central</td><td class="warn">$3.15–3.25</td><td class="warn">$2.90–3.05</td><td>$2.75–2.85</td><td>$2.56</td></tr>
+        <tr><td>Northeast</td><td class="warn">$3.05–3.15</td><td class="warn">$2.80–2.95</td><td>$2.65–2.75</td><td>$2.47</td></tr>
+        <tr><td>West</td><td>$2.85–2.95</td><td>$2.60–2.75</td><td>$2.45–2.55</td><td>$2.29</td></tr>
       </table>
     </div>
 
     <div class="rates-section">
-      <h3>⚙️ Extras Comunes</h3>
+      <h3>📐 Step Deck</h3>
       <table class="rates-table">
-        <tr><th>Servicio</th><th>Costo aprox.</th></tr>
-        <tr><td>Winch (inoperable)</td><td>+$100–150</td></tr>
-        <tr><td>Oversize permit (por estado)</td><td>$50–150/estado</td></tr>
-        <tr><td>Escort/pilot car</td><td>$2.50–4.00/mi</td></tr>
-        <tr><td>Tarp fee (flatbed)</td><td>+$50–100</td></tr>
-        <tr><td>Fuel surcharge recargo</td><td>+$0.10–0.20/mi</td></tr>
+        <tr><th>Región</th><th>&lt;200mi</th><th>200–500mi</th><th>500–700mi</th><th>&gt;700mi</th></tr>
+        <tr><td>Midwest</td><td class="warn">$3.65–3.80</td><td class="warn">$3.35–3.55</td><td class="good">$3.15–3.30</td><td class="good">$3.00</td></tr>
+        <tr><td>Southeast</td><td class="warn">$3.60–3.75</td><td class="warn">$3.30–3.50</td><td class="good">$3.10–3.25</td><td class="good">$2.96</td></tr>
+        <tr><td>South Central</td><td class="warn">$3.40–3.55</td><td class="warn">$3.10–3.30</td><td>$2.95–3.10</td><td>$2.79</td></tr>
+        <tr><td>Northeast</td><td class="warn">$3.30–3.45</td><td class="warn">$3.00–3.20</td><td>$2.85–3.00</td><td>$2.70</td></tr>
+        <tr><td>West</td><td>$3.10–3.25</td><td>$2.80–3.00</td><td>$2.65–2.80</td><td>$2.52</td></tr>
+      </table>
+      <p class="rates-note">+$0.23/mi sobre flatbed. Loads &gt;12' alto o 8'6" ancho pueden requerir permisos oversize.</p>
+    </div>
+
+    <div class="rates-section">
+      <h3>🏋️ Lowboy / RGN (Heavy Haul)</h3>
+      <table class="rates-table">
+        <tr><th>Tipo</th><th>$/mi driver</th><th>Extras</th></tr>
+        <tr><td>RGN estándar (&lt;50k lbs)</td><td class="warn">$3.00–3.50</td><td>Permisos $50–150/estado</td></tr>
+        <tr><td>Heavy RGN (50k–80k lbs)</td><td class="warn">$3.50–4.50</td><td>+ Escorts requeridos</td></tr>
+        <tr><td>Super heavy (&gt;80k lbs)</td><td class="good">Cotizar directo</td><td>Pilot cars + ingeniería</td></tr>
+        <tr><td>Escort / Pilot car</td><td>$2.50–4.00/mi</td><td>Por vehículo adicional</td></tr>
+      </table>
+    </div>
+
+    <div class="rates-section">
+      <h3>🔥 Hotshot (pickup + gooseneck/flatbed &lt;26')</h3>
+      <table class="rates-table">
+        <tr><th>Distancia</th><th>$/mi driver</th><th>Mínimo cobro</th></tr>
+        <tr><td>&lt;200mi</td><td class="warn">$2.20–2.60</td><td>$300–400</td></tr>
+        <tr><td>200–500mi</td><td class="warn">$2.00–2.30</td><td>—</td></tr>
+        <tr><td>500–800mi</td><td class="good">$1.80–2.10</td><td>—</td></tr>
+        <tr><td>&gt;800mi</td><td class="good">$1.60–1.90</td><td>—</td></tr>
+      </table>
+      <p class="rates-note">Partial/LTL: descuento 20–40% sobre tasa base según peso y espacio usado.</p>
+    </div>
+
+    <div class="rates-section">
+      <h3>🚗 Car Hauler</h3>
+      <table class="rates-table">
+        <tr><th>Tipo</th><th>$/mi driver</th><th>Mínimo</th><th>Notas</th></tr>
+        <tr><td>Open — 1 vehículo</td><td>$0.85–1.10</td><td>$300–400</td><td>Estándar</td></tr>
+        <tr><td>Open — multi-car</td><td>$0.60–0.85</td><td>$250/unidad</td><td>Comparte trailer</td></tr>
+        <tr><td>Enclosed — 1 vehículo</td><td class="warn">$1.20–1.60</td><td>$500–700</td><td>Clásicos/lujo</td></tr>
+        <tr><td>Inoperable (winch)</td><td colspan="2">+$100–150 al precio base</td><td>Driver con winch</td></tr>
+      </table>
+    </div>
+
+    <div class="rates-section">
+      <h3>⚡ Power Only / Van / Sprinter</h3>
+      <table class="rates-table">
+        <tr><th>Tipo</th><th>$/mi driver</th><th>Notas</th></tr>
+        <tr><td>Power Only (semi)</td><td class="good">$1.80–2.20</td><td>Cliente provee trailer</td></tr>
+        <tr><td>Sprinter / Cargo Van</td><td>$1.50–2.00</td><td>&lt;2,500 lbs</td></tr>
+        <tr><td>Enclosed trailer (moto/ATV)</td><td class="warn">$1.60–2.20</td><td>Según tamaño</td></tr>
+      </table>
+    </div>
+
+    <div class="rates-section">
+      <h3>⚙️ Extras universales</h3>
+      <table class="rates-table">
+        <tr><th>Servicio</th><th>Costo driver</th></tr>
+        <tr><td>Winch (inoperable)</td><td>+$100–$150</td></tr>
+        <tr><td>Oversize permit (por estado)</td><td>$50–$150/estado</td></tr>
+        <tr><td>Tarp fee (flatbed)</td><td>+$50–$100</td></tr>
+        <tr><td>Fuel surcharge</td><td>+$0.10–$0.20/mi</td></tr>
+        <tr><td>Detention / Layover</td><td>$150–$300/día</td></tr>
       </table>
     </div>
 
     <div class="rates-section">
       <h3>💡 Markup Lou → Cliente</h3>
       <table class="rates-table">
-        <tr><th>Haul type</th><th>Markup típico</th><th>Nota</th></tr>
-        <tr><td>Equipo estándar</td><td class="good">20–30%</td><td>Sobre lo que paga el driver</td></tr>
-        <tr><td>Heavy haul / RGN</td><td class="good">15–25%</td><td>Margen menor, monto mayor</td></tr>
-        <tr><td>Auto transport</td><td class="warn">10–15%</td><td>Mercado más competido</td></tr>
-        <tr><td>Partial / LTL</td><td class="good">25–35%</td><td>Más flexibilidad</td></tr>
+        <tr><th>Tipo</th><th>Markup típico</th></tr>
+        <tr><td>Flatbed / Step Deck estándar</td><td class="good">20–30%</td></tr>
+        <tr><td>Heavy Haul (Lowboy/RGN)</td><td class="good">15–25%</td></tr>
+        <tr><td>Hotshot</td><td class="good">20–30%</td></tr>
+        <tr><td>Car Hauler open</td><td class="warn">10–15%</td></tr>
+        <tr><td>Power Only</td><td class="warn">10–20%</td></tr>
+        <tr><td>Partial / LTL</td><td class="good">25–35%</td></tr>
       </table>
-      <p class="rates-note">Siempre proteger la billetera del cliente — negociar con el driver hasta el límite razonable antes de cerrar.</p>
+      <p class="rates-note">Siempre proteger la billetera del cliente — negociar con el driver hasta el límite razonable.</p>
     </div>
   </div>
 </div>
