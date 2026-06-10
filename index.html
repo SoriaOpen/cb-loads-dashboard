@@ -542,7 +542,7 @@ function loadData() {
       const base = initialMap[l.id];
       if (!base) return l;
       // Preserve user data: status, rate, carrier, deliveryDate
-      return { ...base, status: l.status, rate: l.rate, carrier: l.carrier, deliveryDate: l.deliveryDate, notes: l.notes, driverPay: l.driverPay, title: l.title, origin: l.origin, dest: l.dest, equip: l.equip, weight: l.weight, dims: l.dims, client: l.client };
+      return { ...base, status: l.status, rate: l.rate, carrier: l.carrier, deliveryDate: l.deliveryDate, notes: l.notes };
     });
     const existingIds = new Set(loads.map(l => l.id));
     const newLoads = INITIAL_LOADS.filter(l => !existingIds.has(l.id) && !deletedIds.includes(l.id));
