@@ -556,6 +556,67 @@ table.data td.red { color: var(--red); font-weight: 700; }
 .empty { text-align: center; padding: 50px 20px; color: var(--text-muted); }
 
 /* ═══════════════════════════════════════════
+   SECCIÓN: MENSAJES (RingCentral)
+═══════════════════════════════════════════ */
+.tab-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 6px; margin-left: 6px; background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; border-radius: 9px; vertical-align: middle; }
+.tab-badge[hidden] { display: none !important; }
+
+.msg-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.msg-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.msg-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.msg-status { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; padding: 8px 12px; background: var(--bg-card); border-radius: 8px; border-left: 3px solid var(--border); }
+.msg-status.ok { border-left-color: var(--green); }
+.msg-status.warn { border-left-color: var(--yellow); }
+.msg-status.err { border-left-color: var(--red); }
+
+.msg-list { display: flex; flex-direction: column; gap: 12px; }
+.msg-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.15s; }
+.msg-card:hover { border-color: #3b4254; }
+.msg-card.pending { border-left: 4px solid var(--yellow); }
+.msg-card.responded { border-left: 4px solid var(--green); opacity: 0.85; }
+.msg-card.handled { opacity: 0.55; }
+.msg-card.hot { border-left-color: #f97316; }
+.msg-card.stop { border-left-color: var(--red); }
+.msg-head { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--bg-deeper); flex-wrap: wrap; }
+.msg-from { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.msg-from .phone { color: var(--text-muted); font-weight: 400; font-size: 12px; margin-left: 8px; cursor: pointer; }
+.msg-from .phone:hover { color: var(--blue); }
+.msg-tags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.msg-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+.msg-tag.hot { background: #2d1500; color: #f97316; border: 1px solid #7c2d12; }
+.msg-tag.stop { background: #2d1a1a; color: var(--red); border: 1px solid #7f1d1d; }
+.msg-tag.normal { background: #1a2535; color: var(--blue); border: 1px solid #1e3a5f; }
+.msg-tag.responded { background: #052e16; color: var(--green); border: 1px solid #166534; }
+.msg-tag.handled { background: var(--bg-deeper); color: var(--text-muted); border: 1px solid var(--border); }
+.msg-time { font-size: 11px; color: var(--text-muted); }
+
+.msg-body { padding: 12px 16px; }
+.msg-inbound { font-size: 13px; color: var(--text-primary); background: var(--bg-deeper); padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--blue); white-space: pre-wrap; word-break: break-word; }
+.msg-thread { font-size: 11px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 8px; max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+.msg-card.expanded .msg-thread { max-height: 500px; }
+.msg-thread-toggle { font-size: 11px; color: var(--blue); cursor: pointer; user-select: none; margin-top: 6px; display: inline-block; }
+.msg-thread-line { display: flex; gap: 8px; padding: 4px 0; align-items: flex-start; }
+.msg-thread-line .dir { font-weight: 700; min-width: 30px; font-size: 11px; }
+.msg-thread-line .dir.in { color: var(--blue); }
+.msg-thread-line .dir.out { color: var(--green); }
+.msg-thread-line .txt { color: var(--text-secondary); flex: 1; font-size: 11px; white-space: pre-wrap; word-break: break-word; }
+.msg-thread-line .ts { color: var(--text-muted); font-size: 10px; min-width: 80px; text-align: right; }
+
+.msg-reply-area { margin-top: 10px; }
+.msg-reply-textarea { width: 100%; background: var(--bg-deeper); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 70px; font-family: inherit; line-height: 1.4; }
+.msg-reply-textarea:focus { outline: none; border-color: var(--blue); }
+.msg-reply-row { display: flex; gap: 8px; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; }
+.msg-quick-replies { display: flex; gap: 6px; flex-wrap: wrap; }
+.msg-quick { font-size: 11px; padding: 4px 10px; background: var(--bg-deeper); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; }
+.msg-quick:hover { background: var(--bg-card); border-color: var(--blue); color: var(--blue); }
+.msg-buttons { display: flex; gap: 6px; }
+.btn-send { background: #166534; color: #4ade80; border: 1px solid #15803d; padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.btn-send:hover { background: #15803d; color: #fff; }
+.btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-handle { background: var(--bg-deeper); color: var(--text-secondary); border: 1px solid var(--border); padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.btn-handle:hover { background: var(--bg-card); color: var(--text-primary); }
+
+/* ═══════════════════════════════════════════
    SECCIÓN: RESPONSIVE
 ═══════════════════════════════════════════ */
 @media (max-width: 900px) {
@@ -598,6 +659,7 @@ table.data td.red { color: var(--red); font-weight: 700; }
 ═══════════════════════════════════════════ -->
 <nav class="tabs" id="tabsNav">
   <button class="tab active" data-tab="loads">📦 Cargas</button>
+  <button class="tab" data-tab="messages">💬 Mensajes <span class="tab-badge" id="msgBadge" hidden>0</span></button>
   <button class="tab" data-tab="finance">💰 Finanzas</button>
   <button class="tab" data-tab="clients">👥 Clientes</button>
   <button class="tab" data-tab="todo">✅ To-Do</button>
@@ -669,6 +731,32 @@ table.data td.red { color: var(--red); font-weight: 700; }
 ═══════════════════════════════════════════ -->
 <section class="tab-panel" id="panel-todo">
   <div class="todo-cols" id="todoCols"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     TAB 5: MENSAJES (RingCentral)
+═══════════════════════════════════════════ -->
+<section class="tab-panel" id="panel-messages">
+  <div class="msg-toolbar">
+    <div class="msg-filters" id="msgFilterBar">
+      <button class="filter-btn active" data-msgfilter="pending">⏳ Pendientes <span id="msgCountPending">0</span></button>
+      <button class="filter-btn" data-msgfilter="responded">✅ Respondidos <span id="msgCountResponded">0</span></button>
+      <button class="filter-btn" data-msgfilter="all">📋 Todos <span id="msgCountAll">0</span></button>
+      <button class="filter-btn" data-msgfilter="handled">📦 Archivados <span id="msgCountHandled">0</span></button>
+    </div>
+    <div class="msg-actions">
+      <input type="text" class="search-box" id="msgSearch" placeholder="🔍 Buscar mensaje, número, texto…" style="width: 280px">
+      <select id="msgDays" class="sort-select">
+        <option value="3">3 días</option>
+        <option value="7" selected>7 días</option>
+        <option value="14">14 días</option>
+        <option value="30">30 días</option>
+      </select>
+      <button class="btn-primary" id="btnRefreshMsgs">🔄 Actualizar</button>
+    </div>
+  </div>
+  <div class="msg-status" id="msgStatus"></div>
+  <div class="msg-list" id="msgList"></div>
 </section>
 
 <!-- ═══════════════════════════════════════════
@@ -1772,17 +1860,301 @@ function wireEvents() {
 }
 
 // ═══════════════════════════════════════════
+// MÓDULO: MENSAJES (RingCentral via Heidy server)
+// ═══════════════════════════════════════════
+const HEIDY_BASE = 'http://localhost:7729';
+const MSG_STORAGE_KEY = 'cbloads_messages_v1';
+const QUICK_REPLIES = [
+  { label: '👍 Thanks', text: 'Thanks for getting back to me! Let me know whenever you need anything moved. Lou' },
+  { label: '📞 Call', text: 'Hey, give me a quick call when you have a chance so we can go over the details. Thanks! Lou' },
+  { label: '💰 Quote', text: 'Working on a quote for you right now, will get back to you shortly with numbers. Lou' },
+  { label: '🔇 Mute', text: '' },
+];
+
+let msgState = {
+  conversations: [],
+  filter: 'pending',
+  search: '',
+  days: 7,
+  fetchedAt: null,
+  loading: false,
+  error: null,
+  meta: loadMsgMeta(),  // { phone: { handled: bool, lastSeen: iso } }
+};
+
+function loadMsgMeta() {
+  try { return JSON.parse(localStorage.getItem(MSG_STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveMsgMeta() {
+  localStorage.setItem(MSG_STORAGE_KEY, JSON.stringify(msgState.meta));
+}
+
+function msgClassify(text) {
+  const t = (text || '').toLowerCase();
+  if (/\bstop\b|unsubscribe|remove me|opt.?out|take me off/i.test(t)) return 'stop';
+  if (/quote|ballpark|rate|price|how much|cost|move|haul|pick.?up|deliver|load|need|looking for|ship/i.test(t)) return 'hot';
+  return 'normal';
+}
+
+function msgTimeFmt(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString('en-US', { timeZone: 'America/Guatemala', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+  } catch { return iso; }
+}
+
+async function fetchMessages() {
+  msgState.loading = true; msgState.error = null;
+  renderMsgStatus();
+  try {
+    const r = await fetch(`${HEIDY_BASE}/messages?days=${msgState.days}`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    msgState.conversations = data.conversations || [];
+    msgState.fetchedAt = data.fetchedAt;
+    msgState.loading = false;
+  } catch(e) {
+    msgState.loading = false;
+    msgState.error = e.message;
+    msgState.conversations = [];
+  }
+  renderMessages();
+  renderMsgStatus();
+  updateMsgBadge();
+}
+
+function renderMsgStatus() {
+  const el = document.getElementById('msgStatus');
+  if (!el) return;
+  if (msgState.loading) {
+    el.className = 'msg-status'; el.textContent = '⏳ Cargando mensajes desde RingCentral…';
+    return;
+  }
+  if (msgState.error) {
+    el.className = 'msg-status err';
+    el.innerHTML = `⚠️ No se pudo conectar a Heidy server: <code>${msgState.error}</code><br><span style="font-size:11px">Ejecutá <code>node heidy_server.js</code> en la PC para activar.</span>`;
+    return;
+  }
+  if (!msgState.fetchedAt) {
+    el.className = 'msg-status warn';
+    el.textContent = 'Tocá 🔄 Actualizar para cargar los mensajes.';
+    return;
+  }
+  el.className = 'msg-status ok';
+  el.textContent = `✅ Última actualización: ${msgTimeFmt(msgState.fetchedAt)} — ${msgState.conversations.length} conversaciones (últimos ${msgState.days} días)`;
+}
+
+function updateMsgBadge() {
+  const pending = msgState.conversations.filter(c => !c.responded && !msgState.meta[c.phone]?.handled).length;
+  const responded = msgState.conversations.filter(c => c.responded).length;
+  const handled = msgState.conversations.filter(c => msgState.meta[c.phone]?.handled).length;
+  const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n; };
+  set('msgCountPending', pending);
+  set('msgCountResponded', responded);
+  set('msgCountAll', msgState.conversations.length);
+  set('msgCountHandled', handled);
+  const badge = document.getElementById('msgBadge');
+  if (badge) {
+    if (pending > 0) { badge.textContent = pending; badge.hidden = false; }
+    else { badge.hidden = true; }
+  }
+}
+
+function filteredConversations() {
+  const term = msgState.search.toLowerCase().trim();
+  return msgState.conversations.filter(c => {
+    const handled = !!msgState.meta[c.phone]?.handled;
+    if (msgState.filter === 'pending' && (c.responded || handled)) return false;
+    if (msgState.filter === 'responded' && !c.responded) return false;
+    if (msgState.filter === 'handled' && !handled) return false;
+    // 'all' shows everything
+    if (term) {
+      const blob = `${c.contactName} ${c.phone} ${c.lastInbound.text}`.toLowerCase();
+      if (!blob.includes(term)) return false;
+    }
+    return true;
+  });
+}
+
+function msgCardHtml(c) {
+  const klass = msgClassify(c.lastInbound.text);
+  const handled = !!msgState.meta[c.phone]?.handled;
+  const stateClass = handled ? 'handled' : (c.responded ? 'responded' : 'pending');
+  const tag = handled ? 'handled' : (c.responded ? 'responded' : klass);
+  const tagLabel = {
+    hot: '🔥 HOT', stop: '🚫 STOP', normal: '💬 NORMAL',
+    responded: '✅ RESPONDIDO', handled: '📦 ARCHIVADO',
+  }[tag];
+  const threadHtml = (c.recentThread || []).map(m => `
+    <div class="msg-thread-line">
+      <span class="dir ${m.dir === 'Inbound' ? 'in' : 'out'}">${m.dir === 'Inbound' ? '« IN' : 'OUT »'}</span>
+      <span class="txt">${escapeHtml(m.text || '')}</span>
+      <span class="ts">${msgTimeFmt(m.time)}</span>
+    </div>`).join('');
+  const quickHtml = QUICK_REPLIES.map(q => `<button class="msg-quick" data-quick="${escapeAttr(q.text)}">${q.label}</button>`).join('');
+  const displayName = c.contactName || c.phone;
+  return `
+    <div class="msg-card ${stateClass} ${klass}" data-phone="${c.phone}">
+      <div class="msg-head">
+        <div class="msg-from">${escapeHtml(displayName)} <span class="phone" data-copy="${c.phone}" title="Copiar">${c.phone}</span></div>
+        <div class="msg-tags">
+          <span class="msg-tag ${tag}">${tagLabel}</span>
+          <span class="msg-time">${msgTimeFmt(c.lastInbound.time)}</span>
+        </div>
+      </div>
+      <div class="msg-body">
+        <div class="msg-inbound">${escapeHtml(c.lastInbound.text)}</div>
+        ${threadHtml ? `<span class="msg-thread-toggle" data-toggle-thread>▾ Ver hilo (${c.messageCount})</span>
+          <div class="msg-thread">${threadHtml}</div>` : ''}
+        <div class="msg-reply-area">
+          <textarea class="msg-reply-textarea" placeholder="Escribe la respuesta… (luego 📤 Enviar)"></textarea>
+          <div class="msg-reply-row">
+            <div class="msg-quick-replies">${quickHtml}</div>
+            <div class="msg-buttons">
+              <button class="btn-handle" data-action="toggle-handle">${handled ? '↩️ Restaurar' : '📦 Archivar'}</button>
+              <button class="btn-send" data-action="send">📤 Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+function escapeAttr(s) { return escapeHtml(s).replace(/\n/g, '&#10;'); }
+
+function renderMessages() {
+  const list = document.getElementById('msgList'); if (!list) return;
+  const items = filteredConversations();
+  if (items.length === 0) {
+    let empty = 'Sin mensajes en esta vista.';
+    if (!msgState.fetchedAt && !msgState.error) empty = 'Presé 🔄 <strong>Actualizar</strong> para cargar mensajes de RingCentral.';
+    if (msgState.error) empty = '⚠️ No hay datos — servidor Heidy no responde.';
+    list.innerHTML = `<div class="empty">${empty}</div>`;
+    return;
+  }
+  list.innerHTML = items.map(msgCardHtml).join('');
+}
+
+async function sendSmsReply(phone, message) {
+  const r = await fetch(`${HEIDY_BASE}/send-sms`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ to: phone, message }),
+  });
+  return r.json();
+}
+
+function wireMessagesEvents() {
+  // Filter bar
+  document.getElementById('msgFilterBar').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn'); if (!btn) return;
+    msgState.filter = btn.dataset.msgfilter;
+    document.querySelectorAll('#msgFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMessages();
+  });
+  // Search
+  document.getElementById('msgSearch').addEventListener('input', e => {
+    msgState.search = e.target.value; renderMessages();
+  });
+  // Days select
+  document.getElementById('msgDays').addEventListener('change', e => {
+    msgState.days = parseInt(e.target.value, 10) || 7;
+    fetchMessages();
+  });
+  // Refresh
+  document.getElementById('btnRefreshMsgs').addEventListener('click', fetchMessages);
+
+  // Card delegation
+  document.getElementById('msgList').addEventListener('click', async e => {
+    const card = e.target.closest('.msg-card'); if (!card) return;
+    const phone = card.dataset.phone;
+
+    // Copy phone
+    if (e.target.matches('[data-copy]')) {
+      navigator.clipboard.writeText(e.target.dataset.copy).catch(()=>{});
+      toast('📞 Teléfono copiado');
+      return;
+    }
+    // Toggle thread
+    if (e.target.matches('[data-toggle-thread]')) {
+      card.classList.toggle('expanded');
+      e.target.textContent = card.classList.contains('expanded') ? `▴ Ocultar hilo` : e.target.textContent.replace(/^▴/, '▾');
+      return;
+    }
+    // Quick reply
+    if (e.target.matches('[data-quick]')) {
+      const ta = card.querySelector('.msg-reply-textarea');
+      ta.value = e.target.dataset.quick;
+      ta.focus();
+      return;
+    }
+    // Toggle handle
+    if (e.target.matches('[data-action="toggle-handle"]')) {
+      msgState.meta[phone] = msgState.meta[phone] || {};
+      msgState.meta[phone].handled = !msgState.meta[phone].handled;
+      saveMsgMeta();
+      renderMessages(); updateMsgBadge();
+      toast(msgState.meta[phone].handled ? '📦 Archivado' : '↩️ Restaurado');
+      return;
+    }
+    // Send
+    if (e.target.matches('[data-action="send"]')) {
+      const ta = card.querySelector('.msg-reply-textarea');
+      const msg = ta.value.trim();
+      if (!msg) { toast('✏️ Escribí la respuesta primero'); return; }
+      if (!confirm(`Enviar SMS a ${phone}?\n\n"${msg}"`)) return;
+      const btn = e.target; btn.disabled = true; btn.textContent = '⏳ Enviando…';
+      try {
+        const r = await sendSmsReply(phone, msg);
+        if (r.ok) {
+          toast('✅ SMS enviado');
+          ta.value = '';
+          // Mark conversation as responded locally
+          const conv = msgState.conversations.find(c => c.phone === phone);
+          if (conv) { conv.responded = true; conv.recentThread.push({ dir: 'Outbound', text: msg, time: new Date().toISOString() }); }
+          renderMessages(); updateMsgBadge();
+        } else {
+          toast('❌ Error: ' + (r.error || 'desconocido'));
+        }
+      } catch(err) {
+        toast('❌ No se pudo enviar: ' + err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = '📤 Enviar';
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════
 // MÓDULO: INIT
 // ═══════════════════════════════════════════
 loadData();
 loadTodos();
 setDate();
 wireEvents();
+wireMessagesEvents();
 renderLoads();
 renderFinance();
 renderClients();
 renderTodo();
+renderMessages();
+renderMsgStatus();
+updateMsgBadge();
 updateStats();
+
+// Auto-fetch messages when Messages tab is clicked the first time
+document.getElementById('tabsNav').addEventListener('click', e => {
+  const btn = e.target.closest('.tab'); if (!btn) return;
+  if (btn.dataset.tab === 'messages' && !msgState.fetchedAt && !msgState.loading) {
+    fetchMessages();
+  }
+});
 </script>
 </body>
 </html>
